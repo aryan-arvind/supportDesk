@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ticket Details - SupportDesk</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --brand: #0f766e;
+      --brand-dark: #0b4f49;
+      --ink: #0b1220;
+      --muted: #6b7280;
+      --paper: #f4f6fb;
+      --aqua: #6ee7b7;
+      --sky: #93c5fd;
+    }
+    body {
+      font-family: "Manrope", sans-serif;
+      background:
+        radial-gradient(900px 520px at 6% -12%, rgba(16, 185, 129, 0.18), transparent 60%),
+        radial-gradient(760px 420px at 92% -18%, rgba(59, 130, 246, 0.14), transparent 55%),
+        var(--paper);
+      color: var(--ink);
+    }
+    h1, h2, h3, .display {
+      font-family: "Space Grotesk", sans-serif;
+    }
+    .card {
+      background: #ffffff;
+      border: 1px solid rgba(226, 232, 240, 0.9);
+      box-shadow: 0 24px 60px -40px rgba(15, 23, 42, 0.5);
+    }
+    .glass {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(12px);
+    }
+    .shadow-soft {
+      box-shadow: 0 22px 50px -35px rgba(15, 23, 42, 0.45);
+    }
+    .accent-bar {
+      height: 6px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--brand), var(--aqua));
+    }
+    .fade-up {
+      animation: fadeUp 0.6s ease both;
+    }
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    .dot-grid {
+      background-image: radial-gradient(rgba(15, 118, 110, 0.12) 1px, transparent 1px);
+      background-size: 18px 18px;
+    }
+    .glass-grid {
+      background-image:
+        radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.08), transparent 35%),
+        radial-gradient(circle at 80% 0%, rgba(16, 185, 129, 0.12), transparent 40%);
+    }
+  </style>
+</head>
+<body class="min-h-screen">
+  <header class="sticky top-0 z-10 backdrop-blur bg-white/70 border-b border-slate-200">
+    <div class="max-w-5xl mx-auto px-4 py-4 flex flex-wrap items-center justify-between gap-4">
+      <div class="flex items-center gap-4">
+        <div class="h-11 w-11 rounded-2xl bg-teal-700 text-white grid place-items-center font-semibold">SD</div>
+        <div>
+          <p class="display text-xl font-semibold tracking-tight">SupportDesk</p>
+          <p class="text-xs text-slate-500">Ticket details</p>
+        </div>
+      </div>
+      <a href="index.html" class="text-sm font-semibold text-teal-700 hover:text-teal-800">Back to tickets</a>
+    </div>
+  </header>
+
+  <main class="max-w-5xl mx-auto px-4 py-8">
+    <div id="notFound" class="hidden card glass rounded-3xl p-6 text-center fade-up dot-grid glass-grid">
+      <p class="text-lg font-semibold">Ticket not found</p>
+      <p class="text-sm text-slate-500 mt-1">Check the ticket ID and try again.</p>
+    </div>
+
+    <div class="grid gap-6 lg:grid-cols-[1.45fr_0.55fr]">
+      <div class="grid gap-6">
+        <section id="ticketCard" class="hidden card glass rounded-3xl p-6 fade-up dot-grid glass-grid">
+      <div class="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <p class="text-xs uppercase tracking-[0.2em] text-slate-500">Ticket</p>
+          <h1 id="ticketId" class="display text-2xl font-semibold"></h1>
+          <p id="ticketSubject" class="text-slate-600 mt-1"></p>
+        </div>
+        <div class="flex flex-wrap gap-2">
+          <span id="statusBadge" class="px-3 py-1 rounded-full text-xs font-semibold"></span>
+          <span id="priorityBadge" class="px-3 py-1 rounded-full text-xs font-semibold"></span>
+        </div>
+      </div>
+
+      <div class="mt-6 grid gap-4 md:grid-cols-2">
+        <div class="bg-slate-50 rounded-2xl p-4">
+          <p class="text-xs uppercase tracking-wide text-slate-500">Customer</p>
+          <p id="customerName" class="text-lg font-semibold"></p>
+          <p id="customerEmail" class="text-sm text-slate-500"></p>
+        </div>
+        <div class="bg-slate-50 rounded-2xl p-4">
+          <p class="text-xs uppercase tracking-wide text-slate-500">Created</p>
+          <p id="createdAt" class="text-lg font-semibold"></p>
+        </div>
+      </div>
+
+      <div class="mt-6">
+        <p class="text-sm font-semibold text-slate-700">Description</p>
+        <p id="ticketDescription" class="mt-2 text-slate-600 leading-relaxed"></p>
+      </div>
+    </section>
+
+    <section id="actionsCard" class="hidden card glass rounded-3xl p-6 fade-up" style="animation-delay: 0.05s;">
+      <div class="grid gap-4 md:grid-cols-[2fr_1fr] items-end">
+        <div>
+          <label class="text-sm font-semibold text-slate-700" for="statusSelect">Update Status</label>
+          <select id="statusSelect" class="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 focus:outline-none focus:ring-2 focus:ring-teal-500">
+            <option value="Open">Open</option>
+            <option value="In Progress">In Progress</option>
+            <option value="Closed">Closed</option>
+          </select>
+        </div>
+        <button id="saveStatus" class="rounded-full bg-gradient-to-r from-teal-700 to-emerald-600 px-5 py-3 text-white text-sm font-semibold shadow-sm hover:shadow-md transition">Save Status</button>
+      </div>
+      <p id="statusMessage" class="mt-3 text-sm"></p>
+    </section>
+
+    <section id="notesCard" class="hidden card glass rounded-3xl p-6 fade-up" style="animation-delay: 0.1s;">
+      <h2 class="display text-lg font-semibold">Notes</h2>
+      <div id="notesList" class="mt-4 grid gap-3"></div>
+
+      <div class="mt-6">
+        <label class="text-sm font-semibold text-slate-700" for="noteInput">Add a note</label>
+        <textarea id="noteInput" rows="4" class="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 focus:outline-none focus:ring-2 focus:ring-teal-500"></textarea>
+        <button id="addNote" class="mt-3 rounded-full bg-slate-900 px-4 py-2 text-white text-sm font-semibold hover:bg-slate-800 transition">Add Note</button>
+        <p id="noteMessage" class="mt-2 text-sm"></p>
+      </div>
+    </section>
+      </div>
+
+      <aside class="grid gap-4">
+        <div class="card rounded-3xl p-6 shadow-soft fade-up glass-grid" style="animation-delay: 0.08s;">
+          <p class="text-xs uppercase tracking-[0.2em] text-slate-400">Status track</p>
+          <h3 class="display text-base font-semibold mt-2">Resolution path</h3>
+          <div class="mt-4 space-y-3 text-sm text-slate-600">
+            <div class="flex items-center gap-3">
+              <span class="h-2.5 w-2.5 rounded-full bg-emerald-500"></span>
+              <span>Ticket received</span>
+            </div>
+            <div class="flex items-center gap-3">
+              <span class="h-2.5 w-2.5 rounded-full bg-amber-400"></span>
+              <span>Agent reviewing</span>
+            </div>
+            <div class="flex items-center gap-3">
+              <span class="h-2.5 w-2.5 rounded-full bg-slate-400"></span>
+              <span>Resolution shared</span>
+            </div>
+          </div>
+          <div class="mt-4 accent-bar"></div>
+        </div>
+
+        <div class="card rounded-3xl p-6 shadow-soft fade-up" style="animation-delay: 0.12s;">
+          <p class="text-xs uppercase tracking-[0.2em] text-slate-400">Quick actions</p>
+          <div class="mt-4 space-y-2 text-sm">
+            <button class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-2 text-left text-slate-600">Request more details</button>
+            <button class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-2 text-left text-slate-600">Assign to teammate</button>
+            <button class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-2 text-left text-slate-600">Send resolution summary</button>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <script>
+    const API_BASE = "http://localhost:8000";
+    const params = new URLSearchParams(window.location.search);
+    const ticketIdParam = params.get("id");
+
+    const notFound = document.getElementById("notFound");
+    const ticketCard = document.getElementById("ticketCard");
+    const actionsCard = document.getElementById("actionsCard");
+    const notesCard = document.getElementById("notesCard");
+
+    const ticketIdEl = document.getElementById("ticketId");
+    const ticketSubject = document.getElementById("ticketSubject");
+    const customerName = document.getElementById("customerName");
+    const customerEmail = document.getElementById("customerEmail");
+    const createdAt = document.getElementById("createdAt");
+    const ticketDescription = document.getElementById("ticketDescription");
+    const statusBadge = document.getElementById("statusBadge");
+    const priorityBadge = document.getElementById("priorityBadge");
+    const statusSelect = document.getElementById("statusSelect");
+    const saveStatus = document.getElementById("saveStatus");
+    const statusMessage = document.getElementById("statusMessage");
+
+    const notesList = document.getElementById("notesList");
+    const noteInput = document.getElementById("noteInput");
+    const addNote = document.getElementById("addNote");
+    const noteMessage = document.getElementById("noteMessage");
+
+    function formatDate(value) {
+      if (!value) return "";
+      const date = new Date(value);
+      return date.toLocaleString();
+    }
+
+    function setBadgeStyles(status, priority) {
+      const statusStyles = {
+        "Open": "bg-blue-50 text-blue-700 border border-blue-100",
+        "In Progress": "bg-amber-50 text-amber-700 border border-amber-100",
+        "Closed": "bg-slate-100 text-slate-700 border border-slate-200",
+      };
+      const priorityStyles = {
+        "Critical": "bg-rose-50 text-rose-700 border border-rose-100",
+        "High": "bg-orange-50 text-orange-700 border border-orange-100",
+        "Medium": "bg-sky-50 text-sky-700 border border-sky-100",
+        "Low": "bg-slate-100 text-slate-700 border border-slate-200",
+      };
+      statusBadge.className = `px-3 py-1 rounded-full text-xs font-semibold ${statusStyles[status] || "bg-slate-100 text-slate-600"}`;
+      priorityBadge.className = `px-3 py-1 rounded-full text-xs font-semibold ${priorityStyles[priority] || "bg-slate-100 text-slate-600"}`;
+      statusBadge.textContent = status;
+      priorityBadge.textContent = priority;
+    }
+
+    function renderNotes(notes) {
+      notesList.innerHTML = "";
+      if (!notes.length) {
+        notesList.innerHTML = "<p class=\"text-sm text-slate-500\">No notes yet.</p>";
+        return;
+      }
+      notes.forEach((note) => {
+        const card = document.createElement("div");
+        card.className = "rounded-xl border border-slate-200 bg-slate-50 p-4";
+        card.innerHTML = `
+          <p class="text-sm text-slate-700">${note.note_text || ""}</p>
+          <p class="text-xs text-slate-500 mt-2">${formatDate(note.created_at)}</p>
+        `;
+        notesList.appendChild(card);
+      });
+    }
+
+    function showTicket(data) {
+      ticketIdEl.textContent = data.ticket_id;
+      ticketSubject.textContent = data.subject;
+      customerName.textContent = data.customer_name;
+      customerEmail.textContent = data.customer_email;
+      createdAt.textContent = formatDate(data.created_at);
+      ticketDescription.textContent = data.description;
+      statusSelect.value = data.status;
+      setBadgeStyles(data.status, data.priority);
+      renderNotes(data.notes || []);
+
+      ticketCard.classList.remove("hidden");
+      actionsCard.classList.remove("hidden");
+      notesCard.classList.remove("hidden");
+    }
+
+    async function loadTicket() {
+      if (!ticketIdParam) {
+        notFound.classList.remove("hidden");
+        return;
+      }
+
+      // Fetch the ticket details and notes by ticket ID.
+      try {
+        const response = await fetch(`${API_BASE}/api/tickets/${encodeURIComponent(ticketIdParam)}`);
+        if (response.status === 404) {
+          notFound.classList.remove("hidden");
+          return;
+        }
+        if (!response.ok) {
+          throw new Error("Failed to load ticket");
+        }
+        const data = await response.json();
+        showTicket(data);
+      } catch (error) {
+        notFound.classList.remove("hidden");
+      }
+    }
+
+    saveStatus.addEventListener("click", async () => {
+      statusMessage.textContent = "";
+      const payload = { status: statusSelect.value };
+
+      // Update the ticket status with the selected value.
+      try {
+        const response = await fetch(`${API_BASE}/api/tickets/${encodeURIComponent(ticketIdParam)}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
+        });
+        if (!response.ok) {
+          throw new Error("Failed to update status");
+        }
+        statusMessage.textContent = "Status updated.";
+        statusMessage.className = "mt-3 text-sm text-emerald-700";
+        await loadTicket();
+      } catch (error) {
+        statusMessage.textContent = "Unable to update status.";
+        statusMessage.className = "mt-3 text-sm text-rose-700";
+      }
+    });
+
+    addNote.addEventListener("click", async () => {
+      noteMessage.textContent = "";
+      const noteText = noteInput.value.trim();
+      if (!noteText) {
+        noteMessage.textContent = "Please enter a note before saving.";
+        noteMessage.className = "mt-2 text-sm text-rose-700";
+        return;
+      }
+
+      // Add a new note to the ticket.
+      try {
+        const response = await fetch(`${API_BASE}/api/tickets/${encodeURIComponent(ticketIdParam)}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ note_text: noteText }),
+        });
+        if (!response.ok) {
+          throw new Error("Failed to add note");
+        }
+        noteInput.value = "";
+        noteMessage.textContent = "Note added.";
+        noteMessage.className = "mt-2 text-sm text-emerald-700";
+        await loadTicket();
+      } catch (error) {
+        noteMessage.textContent = "Unable to add note.";
+        noteMessage.className = "mt-2 text-sm text-rose-700";
+      }
+    });
+
+    loadTicket();
+  </script>
+</body>
+</html>

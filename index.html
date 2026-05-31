@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SupportDesk - Tickets</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --brand: #0f766e;
+      --brand-dark: #0b4f49;
+      --ink: #0b1220;
+      --muted: #6b7280;
+      --paper: #f4f6fb;
+      --aqua: #6ee7b7;
+      --sky: #93c5fd;
+      --amber: #fcd34d;
+      --rose: #fb7185;
+    }
+    body {
+      font-family: "Manrope", sans-serif;
+      background:
+        radial-gradient(900px 520px at 6% -12%, rgba(16, 185, 129, 0.18), transparent 60%),
+        radial-gradient(760px 420px at 92% -18%, rgba(59, 130, 246, 0.14), transparent 55%),
+        var(--paper);
+      color: var(--ink);
+    }
+    h1, h2, h3, .display {
+      font-family: "Space Grotesk", sans-serif;
+    }
+    .card {
+      background: #ffffff;
+      border: 1px solid rgba(226, 232, 240, 0.9);
+      box-shadow: 0 24px 60px -40px rgba(15, 23, 42, 0.5);
+    }
+    .glass {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(12px);
+    }
+    .soft-border {
+      border: 1px solid rgba(148, 163, 184, 0.25);
+    }
+    .chip {
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      background: rgba(248, 250, 252, 0.85);
+    }
+    .shadow-soft {
+      box-shadow: 0 22px 50px -35px rgba(15, 23, 42, 0.45);
+    }
+    .pill {
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      background: rgba(255, 255, 255, 0.9);
+    }
+    .accent-bar {
+      height: 6px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--brand), var(--aqua));
+    }
+    .accent-blue {
+      background: linear-gradient(90deg, #2563eb, #60a5fa);
+    }
+    .accent-amber {
+      background: linear-gradient(90deg, #f59e0b, #fcd34d);
+    }
+    .accent-rose {
+      background: linear-gradient(90deg, #fb7185, #fda4af);
+    }
+    .sparkline {
+      height: 42px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, rgba(15, 118, 110, 0.2), rgba(15, 118, 110, 0.04));
+    }
+    .sparkline::after {
+      content: "";
+      display: block;
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, rgba(15, 118, 110, 0.65), rgba(15, 118, 110, 0.05));
+      width: 65%;
+    }
+    .fade-up {
+      animation: fadeUp 0.6s ease both;
+    }
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    .dot-grid {
+      background-image: radial-gradient(rgba(15, 118, 110, 0.12) 1px, transparent 1px);
+      background-size: 18px 18px;
+    }
+    .glass-grid {
+      background-image:
+        radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.08), transparent 35%),
+        radial-gradient(circle at 80% 0%, rgba(16, 185, 129, 0.12), transparent 40%);
+    }
+  </style>
+</head>
+<body class="min-h-screen">
+  <div class="min-h-screen lg:grid lg:grid-cols-[260px_1fr]">
+    <aside class="hidden lg:flex flex-col border-r border-slate-200 bg-white/70 backdrop-blur px-6 py-6">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="h-11 w-11 rounded-2xl bg-teal-700 text-white grid place-items-center font-semibold">SD</div>
+          <div>
+            <p class="display text-lg font-semibold">SupportDesk</p>
+            <p class="text-xs text-slate-500">Command center</p>
+          </div>
+        </div>
+        <button class="pill px-2.5 py-2 rounded-full text-xs text-slate-600">v2.1</button>
+      </div>
+
+      <div class="mt-8">
+        <p class="text-xs uppercase tracking-[0.2em] text-slate-400">Workspace</p>
+        <div class="mt-3 flex items-center gap-3 rounded-2xl bg-slate-900 px-3 py-3 text-white">
+          <div class="h-9 w-9 rounded-full bg-white/15 grid place-items-center font-semibold">AR</div>
+          <div>
+            <p class="text-sm font-semibold">Aryan Support</p>
+            <p class="text-xs text-slate-300">Agent access</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-8">
+        <p class="text-xs uppercase tracking-[0.2em] text-slate-400">Navigation</p>
+        <nav class="mt-3 space-y-2 text-sm">
+          <div class="flex items-center gap-3 px-3 py-2 rounded-xl bg-slate-900 text-white font-semibold cursor-pointer">
+            <span class="h-8 w-8 rounded-xl bg-white/10 grid place-items-center">▣</span>
+            Dashboard
+          </div>
+          <div class="flex items-center gap-3 px-3 py-2 rounded-xl text-slate-600 cursor-pointer">
+            <span class="h-8 w-8 rounded-xl bg-slate-100 grid place-items-center">✉</span>
+            Tickets
+          </div>
+          <div class="flex items-center gap-3 px-3 py-2 rounded-xl text-slate-600 cursor-pointer">
+            <span class="h-8 w-8 rounded-xl bg-slate-100 grid place-items-center">⌁</span>
+            Knowledge
+          </div>
+          <div class="flex items-center gap-3 px-3 py-2 rounded-xl text-slate-600 cursor-pointer">
+            <span class="h-8 w-8 rounded-xl bg-slate-100 grid place-items-center">◔</span>
+            Analytics
+          </div>
+        </nav>
+      </div>
+
+      <div class="mt-8">
+        <p class="text-xs uppercase tracking-[0.2em] text-slate-400">Quick search</p>
+        <div class="mt-3 flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-3 py-2 text-xs text-slate-500">
+          <span>⌘</span>
+          Search tickets...
+        </div>
+      </div>
+
+      <div class="mt-auto grid gap-3">
+        <div class="card rounded-2xl p-4 glass-grid">
+          <p class="text-xs text-slate-500 uppercase tracking-wide">Today</p>
+          <p class="display text-2xl font-semibold">Pulse</p>
+          <p class="text-sm text-slate-500 mt-1">Track open requests and updates.</p>
+          <div class="mt-4 accent-bar"></div>
+        </div>
+        <div class="card rounded-2xl p-4">
+          <p class="text-xs text-slate-500 uppercase tracking-wide">Notifications</p>
+          <p class="text-sm text-slate-600 mt-2">3 new updates awaiting review.</p>
+          <button class="mt-3 pill px-3 py-1.5 rounded-full text-xs text-slate-600">View updates</button>
+        </div>
+      </div>
+    </aside>
+
+    <div class="flex flex-col">
+      <header class="sticky top-0 z-10 border-b border-slate-200 bg-white/80 backdrop-blur">
+        <div class="max-w-6xl mx-auto px-4 py-4 flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <p class="text-xs uppercase tracking-[0.2em] text-slate-400">SupportDesk</p>
+            <h1 class="display text-2xl font-semibold">Ticket workspace</h1>
+            <p class="text-xs text-slate-500">Monitor incoming requests and keep the team aligned.</p>
+          </div>
+          <div class="flex flex-wrap items-center gap-3">
+            <div class="hidden md:flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-2 text-xs text-slate-500">
+              <span class="h-2 w-2 rounded-full bg-emerald-500"></span>
+              Live sync
+            </div>
+            <button class="pill px-4 py-2 rounded-full text-sm font-semibold text-slate-600">Export</button>
+            <a href="create.html" class="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-teal-700 to-emerald-600 px-5 py-2.5 text-white text-sm font-semibold shadow-soft hover:shadow-md transition">
+              New Ticket
+            </a>
+          </div>
+        </div>
+      </header>
+
+      <main class="max-w-6xl mx-auto px-4 py-8 w-full">
+        <section class="grid gap-4 lg:grid-cols-[2.2fr_1fr]">
+          <div class="card glass rounded-3xl p-6 fade-up dot-grid glass-grid">
+            <div class="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <p class="text-xs uppercase tracking-[0.2em] text-slate-500">Search</p>
+                <h2 class="display text-lg font-semibold">Find tickets fast</h2>
+              </div>
+              <span class="chip text-xs px-3 py-1 rounded-full text-slate-500">Live</span>
+            </div>
+            <input id="searchInput" type="text" placeholder="Search by ticket, name, email, or subject" class="mt-4 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 focus:outline-none focus:ring-2 focus:ring-teal-500" />
+            <p class="text-xs text-slate-500 mt-2">Results update as you type.</p>
+          </div>
+          <div class="card glass rounded-3xl p-6 fade-up glass-grid" style="animation-delay: 0.05s;">
+            <p class="text-xs uppercase tracking-[0.2em] text-slate-500">Status filter</p>
+            <h2 class="display text-lg font-semibold mt-1">Pipeline view</h2>
+            <div class="mt-4 flex flex-wrap gap-2">
+              <button data-status="" class="status-btn px-4 py-2 rounded-full text-sm font-semibold bg-slate-900 text-white">All</button>
+              <button data-status="Open" class="status-btn px-4 py-2 rounded-full text-sm font-semibold bg-white text-slate-700 border border-slate-200">Open</button>
+              <button data-status="In Progress" class="status-btn px-4 py-2 rounded-full text-sm font-semibold bg-white text-slate-700 border border-slate-200">In Progress</button>
+              <button data-status="Closed" class="status-btn px-4 py-2 rounded-full text-sm font-semibold bg-white text-slate-700 border border-slate-200">Closed</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          <div class="card rounded-2xl p-4 shadow-soft fade-up glass-grid">
+            <p class="text-xs uppercase tracking-[0.2em] text-slate-400">Total</p>
+            <p id="statTotal" class="display text-2xl font-semibold mt-2">0</p>
+            <p class="text-xs text-slate-500 mt-1">Tickets in view</p>
+            <div class="mt-4 sparkline"></div>
+          </div>
+          <div class="card rounded-2xl p-4 shadow-soft fade-up glass-grid" style="animation-delay: 0.04s;">
+            <p class="text-xs uppercase tracking-[0.2em] text-slate-400">Open</p>
+            <p id="statOpen" class="display text-2xl font-semibold mt-2">0</p>
+            <p class="text-xs text-slate-500 mt-1">Needs response</p>
+            <div class="mt-4 accent-bar accent-blue"></div>
+          </div>
+          <div class="card rounded-2xl p-4 shadow-soft fade-up glass-grid" style="animation-delay: 0.08s;">
+            <p class="text-xs uppercase tracking-[0.2em] text-slate-400">In progress</p>
+            <p id="statProgress" class="display text-2xl font-semibold mt-2">0</p>
+            <p class="text-xs text-slate-500 mt-1">Being handled</p>
+            <div class="mt-4 accent-bar accent-amber"></div>
+          </div>
+          <div class="card rounded-2xl p-4 shadow-soft fade-up glass-grid" style="animation-delay: 0.12s;">
+            <p class="text-xs uppercase tracking-[0.2em] text-slate-400">Closed</p>
+            <p id="statClosed" class="display text-2xl font-semibold mt-2">0</p>
+            <p class="text-xs text-slate-500 mt-1">Resolved today</p>
+            <div class="mt-4 accent-bar accent-rose"></div>
+          </div>
+        </section>
+
+        <section class="mt-6 grid gap-6 lg:grid-cols-[2.1fr_1fr]">
+          <div class="card glass rounded-3xl fade-up" style="animation-delay: 0.1s;">
+            <div class="px-6 py-5 border-b border-slate-100 flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <h2 class="display text-lg font-semibold">Tickets</h2>
+                <p class="text-xs text-slate-500">Inbox-style overview of customer requests</p>
+              </div>
+              <div class="flex items-center gap-2">
+                <button class="pill px-3 py-1 rounded-full text-xs text-slate-500">Newest</button>
+                <span id="ticketCount" class="chip text-xs px-3 py-1 rounded-full text-slate-600">0 results</span>
+              </div>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="min-w-full text-left text-sm">
+                <thead class="bg-slate-50/70 text-slate-600">
+                  <tr>
+                    <th class="px-6 py-3 font-semibold">Ticket ID</th>
+                    <th class="px-6 py-3 font-semibold">Customer</th>
+                    <th class="px-6 py-3 font-semibold">Subject</th>
+                    <th class="px-6 py-3 font-semibold">Status</th>
+                    <th class="px-6 py-3 font-semibold">Priority</th>
+                    <th class="px-6 py-3 font-semibold">Created</th>
+                  </tr>
+                </thead>
+                <tbody id="ticketTable" class="divide-y divide-slate-100"></tbody>
+              </table>
+            </div>
+            <div id="emptyState" class="hidden px-6 py-12 text-center text-slate-500">
+              No tickets found. Try adjusting your filters.
+            </div>
+          </div>
+
+          <aside class="grid gap-4">
+            <div class="card rounded-3xl p-5 shadow-soft fade-up glass-grid" style="animation-delay: 0.12s;">
+              <div class="flex items-center justify-between">
+                <p class="text-xs uppercase tracking-[0.2em] text-slate-400">Activity</p>
+                <span class="chip text-xs px-2 py-1 rounded-full text-slate-500">Today</span>
+              </div>
+              <div class="mt-4 space-y-3 text-sm text-slate-600">
+                <div class="flex items-start gap-3">
+                  <span class="h-2.5 w-2.5 mt-1 rounded-full bg-emerald-500"></span>
+                  <div>
+                    <p class="font-semibold text-slate-700">New customer requests</p>
+                    <p class="text-xs text-slate-500">Check latest ticket IDs.</p>
+                  </div>
+                </div>
+                <div class="flex items-start gap-3">
+                  <span class="h-2.5 w-2.5 mt-1 rounded-full bg-amber-400"></span>
+                  <div>
+                    <p class="font-semibold text-slate-700">In progress reviews</p>
+                    <p class="text-xs text-slate-500">Prioritize high priority items.</p>
+                  </div>
+                </div>
+                <div class="flex items-start gap-3">
+                  <span class="h-2.5 w-2.5 mt-1 rounded-full bg-slate-400"></span>
+                  <div>
+                    <p class="font-semibold text-slate-700">Closed confirmations</p>
+                    <p class="text-xs text-slate-500">Send wrap-up messages.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card rounded-3xl p-5 shadow-soft fade-up glass-grid" style="animation-delay: 0.16s;">
+              <p class="text-xs uppercase tracking-[0.2em] text-slate-400">Guidance</p>
+              <h3 class="display text-base font-semibold mt-2">Response checklist</h3>
+              <ul class="mt-4 space-y-2 text-sm text-slate-600">
+                <li class="flex items-center gap-2"><span class="h-1.5 w-1.5 rounded-full bg-teal-600"></span>Confirm customer details</li>
+                <li class="flex items-center gap-2"><span class="h-1.5 w-1.5 rounded-full bg-teal-600"></span>Assign priority and owner</li>
+                <li class="flex items-center gap-2"><span class="h-1.5 w-1.5 rounded-full bg-teal-600"></span>Share next steps</li>
+              </ul>
+              <div class="mt-5 flex flex-wrap gap-2">
+                <button class="pill px-3 py-1 rounded-full text-xs text-slate-600">Templates</button>
+                <button class="pill px-3 py-1 rounded-full text-xs text-slate-600">Macros</button>
+              </div>
+            </div>
+          </aside>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = "http://localhost:8000";
+    const ticketTable = document.getElementById("ticketTable");
+    const emptyState = document.getElementById("emptyState");
+    const ticketCount = document.getElementById("ticketCount");
+    const searchInput = document.getElementById("searchInput");
+    const statusButtons = document.querySelectorAll(".status-btn");
+    const statTotal = document.getElementById("statTotal");
+    const statOpen = document.getElementById("statOpen");
+    const statProgress = document.getElementById("statProgress");
+    const statClosed = document.getElementById("statClosed");
+
+    let activeStatus = "";
+    let activeSearch = "";
+    let searchTimer = null;
+
+    function formatDate(value) {
+      if (!value) return "";
+      const date = new Date(value);
+      return date.toLocaleString();
+    }
+
+    function statusBadge(status) {
+      const styles = {
+        "Open": "bg-blue-50 text-blue-700 border border-blue-100",
+        "In Progress": "bg-amber-50 text-amber-700 border border-amber-100",
+        "Closed": "bg-slate-100 text-slate-700 border border-slate-200",
+      };
+      return `<span class="px-2.5 py-1 rounded-full text-xs font-semibold ${styles[status] || "bg-slate-100 text-slate-600"}">${status}</span>`;
+    }
+
+    function priorityBadge(priority) {
+      const styles = {
+        "Critical": "bg-rose-50 text-rose-700 border border-rose-100",
+        "High": "bg-orange-50 text-orange-700 border border-orange-100",
+        "Medium": "bg-sky-50 text-sky-700 border border-sky-100",
+        "Low": "bg-slate-100 text-slate-700 border border-slate-200",
+      };
+      return `<span class="px-2.5 py-1 rounded-full text-xs font-semibold ${styles[priority] || "bg-slate-100 text-slate-600"}">${priority}</span>`;
+    }
+
+    function setActiveStatus(value) {
+      activeStatus = value;
+      statusButtons.forEach((button) => {
+        const isActive = button.dataset.status === value;
+        button.className = `status-btn px-4 py-2 rounded-full text-sm font-semibold ${isActive ? "bg-slate-900 text-white" : "bg-white text-slate-700 border border-slate-200"}`;
+      });
+    }
+
+    function renderTickets(tickets) {
+      ticketTable.innerHTML = "";
+      ticketCount.textContent = `${tickets.length} result${tickets.length === 1 ? "" : "s"}`;
+
+      const counts = tickets.reduce(
+        (acc, ticket) => {
+          acc.total += 1;
+          if (ticket.status === "Open") acc.open += 1;
+          if (ticket.status === "In Progress") acc.progress += 1;
+          if (ticket.status === "Closed") acc.closed += 1;
+          return acc;
+        },
+        { total: 0, open: 0, progress: 0, closed: 0 }
+      );
+
+      statTotal.textContent = counts.total;
+      statOpen.textContent = counts.open;
+      statProgress.textContent = counts.progress;
+      statClosed.textContent = counts.closed;
+
+      if (!tickets.length) {
+        emptyState.classList.remove("hidden");
+        return;
+      }
+
+      emptyState.classList.add("hidden");
+      tickets.forEach((ticket) => {
+        const row = document.createElement("tr");
+        row.className = "hover:bg-slate-50/70 cursor-pointer transition";
+        row.innerHTML = `
+          <td class="px-6 py-4 font-semibold text-slate-800">
+            <span class="inline-flex items-center gap-2">
+              <span class="h-2 w-2 rounded-full ${ticket.status === "Open" ? "bg-blue-500" : ticket.status === "In Progress" ? "bg-amber-400" : "bg-slate-400"}"></span>
+              ${ticket.ticket_id}
+            </span>
+          </td>
+          <td class="px-6 py-4">
+            <div class="font-medium">${ticket.customer_name}</div>
+            <div class="text-xs text-slate-500">${ticket.customer_email}</div>
+          </td>
+          <td class="px-6 py-4">${ticket.subject}</td>
+          <td class="px-6 py-4">${statusBadge(ticket.status)}</td>
+          <td class="px-6 py-4">${priorityBadge(ticket.priority)}</td>
+          <td class="px-6 py-4 text-slate-500">${formatDate(ticket.created_at)}</td>
+        `;
+        row.addEventListener("click", () => {
+          window.location.href = `ticket.html?id=${encodeURIComponent(ticket.ticket_id)}`;
+        });
+        ticketTable.appendChild(row);
+      });
+    }
+
+    async function loadTickets() {
+      const params = new URLSearchParams();
+      if (activeStatus) params.set("status", activeStatus);
+      if (activeSearch) params.set("search", activeSearch);
+      const url = `${API_BASE}/api/tickets${params.toString() ? `?${params.toString()}` : ""}`;
+
+      // Fetch tickets with optional status/search filters.
+      try {
+        const response = await fetch(url);
+        if (!response.ok) {
+          throw new Error("Failed to fetch tickets");
+        }
+        const data = await response.json();
+        renderTickets(data);
+      } catch (error) {
+        renderTickets([]);
+        ticketCount.textContent = "0 results";
+      }
+    }
+
+    statusButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        setActiveStatus(button.dataset.status || "");
+        loadTickets();
+      });
+    });
+
+    searchInput.addEventListener("input", (event) => {
+      activeSearch = event.target.value.trim();
+      if (searchTimer) clearTimeout(searchTimer);
+      searchTimer = setTimeout(() => {
+        loadTickets();
+      }, 300);
+    });
+
+    window.addEventListener("focus", () => {
+      loadTickets();
+    });
+
+    document.addEventListener("visibilitychange", () => {
+      if (!document.hidden) {
+        loadTickets();
+      }
+    });
+
+    setActiveStatus("");
+    loadTickets();
+  </script>
+</body>
+</html>
