@@ -20,6 +20,56 @@
       --amber: #fcd34d;
       --rose: #fb7185;
     }
+    html.dark-mode {
+      --ink: #f1f5f9;
+      --muted: #94a3b8;
+      --paper: #0f172a;
+    }
+    html.dark-mode body {
+      background: var(--paper);
+      color: var(--ink);
+    }
+    html.dark-mode .card {
+      background: #1e293b;
+      border-color: rgba(51, 65, 85, 0.9);
+    }
+    html.dark-mode .glass {
+      background: rgba(30, 41, 59, 0.85);
+    }
+    html.dark-mode .chip {
+      background: rgba(51, 65, 85, 0.85);
+    }
+    html.dark-mode .pill {
+      background: rgba(30, 41, 59, 0.9);
+      border-color: rgba(71, 85, 105, 0.25);
+    }
+    html.dark-mode .soft-border {
+      border-color: rgba(71, 85, 105, 0.25);
+    }
+    html.dark-mode aside {
+      background: #1e293b/70 !important;
+      border-color: rgba(71, 85, 105, 0.3);
+    }
+    html.dark-mode header {
+      background: #1e293b/80 !important;
+      border-color: rgba(71, 85, 105, 0.3);
+    }
+    html.dark-mode .bg-white {
+      background: #1e293b;
+      color: var(--ink);
+    }
+    html.dark-mode .text-slate-600, html.dark-mode .text-slate-700, html.dark-mode .text-slate-500 {
+      color: var(--muted);
+    }
+    html.dark-mode .border-slate-200 {
+      border-color: rgba(71, 85, 105, 0.3);
+    }
+    html.dark-mode .bg-slate-50 {
+      background: #334155;
+    }
+    html.dark-mode .divide-slate-100 {
+      border-color: rgba(71, 85, 105, 0.3);
+    }
     body {
       font-family: "Manrope", sans-serif;
       background:
@@ -107,7 +157,7 @@
 </head>
 <body class="min-h-screen">
   <div class="min-h-screen lg:grid lg:grid-cols-[260px_1fr]">
-    <aside class="hidden lg:flex flex-col border-r border-slate-200 bg-white/70 backdrop-blur px-6 py-6">
+    <aside id="sidebar" class="hidden lg:flex flex-col border-r border-slate-200 bg-white/70 backdrop-blur px-6 py-6 transition-all duration-300 fixed lg:static left-0 top-0 h-full w-[260px] z-20 lg:z-auto">
       <div class="flex items-center justify-between">
         <div class="flex items-center gap-3">
           <div class="h-11 w-11 rounded-2xl bg-teal-700 text-white grid place-items-center font-semibold">SD</div>
@@ -137,14 +187,14 @@
             <span class="h-8 w-8 rounded-xl bg-white/10 grid place-items-center">▣</span>
             Dashboard
           </a>
-          <a href="index.html#tickets" class="flex items-center gap-3 px-3 py-2 rounded-xl text-slate-600 cursor-pointer">
+          <button id="ticketsNav" class="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-slate-600 cursor-pointer hover:bg-slate-100 transition">
             <span class="h-8 w-8 rounded-xl bg-slate-100 grid place-items-center">✉</span>
             Tickets
-          </a>
-          <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-xl text-slate-600 cursor-pointer" aria-disabled="true" title="Placeholder">
+          </button>
+          <button id="knowledgeNav" class="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-slate-600 cursor-pointer hover:bg-slate-100 transition" title="Knowledge base">
             <span class="h-8 w-8 rounded-xl bg-slate-100 grid place-items-center">⌁</span>
             Knowledge
-          </a>
+          </button>
           <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-xl text-slate-600 cursor-pointer" aria-disabled="true" title="Placeholder">
             <span class="h-8 w-8 rounded-xl bg-slate-100 grid place-items-center">◔</span>
             Analytics
@@ -178,10 +228,13 @@
     <div class="flex flex-col">
       <header class="sticky top-0 z-10 border-b border-slate-200 bg-white/80 backdrop-blur">
         <div class="max-w-6xl mx-auto px-4 py-4 flex flex-wrap items-center justify-between gap-4">
-          <div>
-            <p class="text-xs uppercase tracking-[0.2em] text-slate-400">SupportDesk</p>
-            <h1 class="display text-2xl font-semibold">Ticket workspace</h1>
-            <p class="text-xs text-slate-500">Monitor incoming requests and keep the team aligned.</p>
+          <div class="flex items-center gap-4">
+            <button id="sidebarToggle" class="lg:hidden pill px-3 py-2 rounded-lg text-slate-600">☰</button>
+            <div>
+              <p class="text-xs uppercase tracking-[0.2em] text-slate-400">SupportDesk</p>
+              <h1 class="display text-2xl font-semibold">Ticket workspace</h1>
+              <p class="text-xs text-slate-500">Monitor incoming requests and keep the team aligned.</p>
+            </div>
           </div>
           <div class="flex flex-wrap items-center gap-3">
             <div class="hidden md:flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-2 text-xs text-slate-500">
@@ -189,6 +242,7 @@
               Live sync
             </div>
             <button class="pill px-4 py-2 rounded-full text-sm font-semibold text-slate-600">Export</button>
+            <button id="darkModeToggle" class="pill px-4 py-2 rounded-full text-sm font-semibold text-slate-600">🌙 Dark</button>
             <a href="create.html" class="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-teal-700 to-emerald-600 px-5 py-2.5 text-white text-sm font-semibold shadow-soft hover:shadow-md transition">
               New Ticket
             </a>
@@ -210,13 +264,28 @@
             <p class="text-xs text-slate-500 mt-2">Results update as you type.</p>
           </div>
           <div class="card glass rounded-3xl p-6 fade-up glass-grid" style="animation-delay: 0.05s;">
-            <p class="text-xs uppercase tracking-[0.2em] text-slate-500">Status filter</p>
+            <p class="text-xs uppercase tracking-[0.2em] text-slate-500">Advanced filters</p>
             <h2 class="display text-lg font-semibold mt-1">Pipeline view</h2>
-            <div class="mt-4 flex flex-wrap gap-2">
-              <button data-status="" class="status-btn px-4 py-2 rounded-full text-sm font-semibold bg-slate-900 text-white">All</button>
-              <button data-status="Open" class="status-btn px-4 py-2 rounded-full text-sm font-semibold bg-white text-slate-700 border border-slate-200">Open</button>
-              <button data-status="In Progress" class="status-btn px-4 py-2 rounded-full text-sm font-semibold bg-white text-slate-700 border border-slate-200">In Progress</button>
-              <button data-status="Closed" class="status-btn px-4 py-2 rounded-full text-sm font-semibold bg-white text-slate-700 border border-slate-200">Closed</button>
+            <div class="mt-4 flex flex-col gap-3">
+              <div>
+                <p class="text-xs text-slate-500 mb-2">Status</p>
+                <div class="flex flex-wrap gap-2">
+                  <button data-status="" class="status-btn px-4 py-2 rounded-full text-sm font-semibold bg-slate-900 text-white">All</button>
+                  <button data-status="Open" class="status-btn px-4 py-2 rounded-full text-sm font-semibold bg-white text-slate-700 border border-slate-200">Open</button>
+                  <button data-status="In Progress" class="status-btn px-4 py-2 rounded-full text-sm font-semibold bg-white text-slate-700 border border-slate-200">In Progress</button>
+                  <button data-status="Closed" class="status-btn px-4 py-2 rounded-full text-sm font-semibold bg-white text-slate-700 border border-slate-200">Closed</button>
+                </div>
+              </div>
+              <div>
+                <p class="text-xs text-slate-500 mb-2">Priority</p>
+                <div class="flex flex-wrap gap-2">
+                  <button data-priority="" class="priority-btn px-4 py-2 rounded-full text-sm font-semibold bg-white text-slate-700 border border-slate-200">All</button>
+                  <button data-priority="Low" class="priority-btn px-4 py-2 rounded-full text-sm font-semibold bg-white text-slate-700 border border-slate-200">Low</button>
+                  <button data-priority="Medium" class="priority-btn px-4 py-2 rounded-full text-sm font-semibold bg-white text-slate-700 border border-slate-200">Medium</button>
+                  <button data-priority="High" class="priority-btn px-4 py-2 rounded-full text-sm font-semibold bg-white text-slate-700 border border-slate-200">High</button>
+                  <button data-priority="Critical" class="priority-btn px-4 py-2 rounded-full text-sm font-semibold bg-white text-slate-700 border border-slate-200">Critical</button>
+                </div>
+              </div>
             </div>
           </div>
         </section>
@@ -339,14 +408,62 @@
     const ticketCount = document.getElementById("ticketCount");
     const searchInput = document.getElementById("searchInput");
     const statusButtons = document.querySelectorAll(".status-btn");
+    const priorityButtons = document.querySelectorAll(".priority-btn");
     const statTotal = document.getElementById("statTotal");
     const statOpen = document.getElementById("statOpen");
     const statProgress = document.getElementById("statProgress");
     const statClosed = document.getElementById("statClosed");
 
     let activeStatus = "";
+    let activePriority = "";
     let activeSearch = "";
     let searchTimer = null;
+
+    // Dark mode functionality
+    const darkModeToggle = document.getElementById("darkModeToggle");
+    const sidebarToggle = document.getElementById("sidebarToggle");
+    const sidebar = document.getElementById("sidebar");
+    const ticketsNav = document.getElementById("ticketsNav");
+    const knowledgeNav = document.getElementById("knowledgeNav");
+
+    function initDarkMode() {
+      const savedDarkMode = localStorage.getItem("darkMode") === "true";
+      if (savedDarkMode) {
+        document.documentElement.classList.add("dark-mode");
+        darkModeToggle.textContent = "☀️ Light";
+      }
+    }
+
+    darkModeToggle.addEventListener("click", () => {
+      document.documentElement.classList.toggle("dark-mode");
+      const isDarkMode = document.documentElement.classList.contains("dark-mode");
+      localStorage.setItem("darkMode", isDarkMode);
+      darkModeToggle.textContent = isDarkMode ? "☀️ Light" : "🌙 Dark";
+    });
+
+    sidebarToggle.addEventListener("click", () => {
+      sidebar.classList.toggle("hidden");
+    });
+
+    // Close sidebar when clicking outside on mobile
+    document.addEventListener("click", (e) => {
+      if (!sidebar.contains(e.target) && !sidebarToggle.contains(e.target) && !sidebar.classList.contains("hidden")) {
+        sidebar.classList.add("hidden");
+      }
+    });
+
+    // Navigation handlers
+    ticketsNav.addEventListener("click", () => {
+      document.querySelector("table").scrollIntoView({ behavior: "smooth" });
+      sidebar.classList.add("hidden");
+    });
+
+    knowledgeNav.addEventListener("click", () => {
+      alert("Knowledge base coming soon! For now, check our documentation or contact support.");
+      sidebar.classList.add("hidden");
+    });
+
+    initDarkMode();
 
     function formatDate(value) {
       if (!value) return "";
@@ -378,6 +495,14 @@
       statusButtons.forEach((button) => {
         const isActive = button.dataset.status === value;
         button.className = `status-btn px-4 py-2 rounded-full text-sm font-semibold ${isActive ? "bg-slate-900 text-white" : "bg-white text-slate-700 border border-slate-200"}`;
+      });
+    }
+
+    function setActivePriority(value) {
+      activePriority = value;
+      priorityButtons.forEach((button) => {
+        const isActive = button.dataset.priority === value;
+        button.className = `priority-btn px-4 py-2 rounded-full text-sm font-semibold ${isActive ? "bg-slate-900 text-white" : "bg-white text-slate-700 border border-slate-200"}`;
       });
     }
 
@@ -436,10 +561,11 @@
     async function loadTickets() {
       const params = new URLSearchParams();
       if (activeStatus) params.set("status", activeStatus);
+      if (activePriority) params.set("priority", activePriority);
       if (activeSearch) params.set("search", activeSearch);
       const url = `${API_BASE}/api/tickets${params.toString() ? `?${params.toString()}` : ""}`;
 
-      // Fetch tickets with optional status/search filters.
+      // Fetch tickets with optional status/priority/search filters.
       try {
         const response = await fetch(url);
         if (!response.ok) {
@@ -456,6 +582,13 @@
     statusButtons.forEach((button) => {
       button.addEventListener("click", () => {
         setActiveStatus(button.dataset.status || "");
+        loadTickets();
+      });
+    });
+
+    priorityButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        setActivePriority(button.dataset.priority || "");
         loadTickets();
       });
     });

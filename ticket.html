@@ -18,6 +18,39 @@
       --aqua: #6ee7b7;
       --sky: #93c5fd;
     }
+    html.dark-mode {
+      --ink: #f1f5f9;
+      --muted: #94a3b8;
+      --paper: #0f172a;
+    }
+    html.dark-mode body {
+      background: var(--paper);
+      color: var(--ink);
+    }
+    html.dark-mode .card {
+      background: #1e293b;
+      border-color: rgba(51, 65, 85, 0.9);
+    }
+    html.dark-mode .glass {
+      background: rgba(30, 41, 59, 0.85);
+    }
+    html.dark-mode header {
+      background: #1e293b/80 !important;
+      border-color: rgba(71, 85, 105, 0.3);
+    }
+    html.dark-mode .bg-white {
+      background: #1e293b;
+      color: var(--ink);
+    }
+    html.dark-mode .text-slate-600, html.dark-mode .text-slate-700, html.dark-mode .text-slate-500, html.dark-mode .text-slate-400 {
+      color: var(--muted);
+    }
+    html.dark-mode .border-slate-200 {
+      border-color: rgba(71, 85, 105, 0.3);
+    }
+    html.dark-mode .bg-slate-50 {
+      background: #334155;
+    }
     body {
       font-family: "Manrope", sans-serif;
       background:
@@ -80,7 +113,10 @@
           <p class="text-xs text-slate-500">Ticket details</p>
         </div>
       </div>
-      <a href="index.html" class="text-sm font-semibold text-teal-700 hover:text-teal-800">Back to tickets</a>
+      <div class="flex items-center gap-3">
+        <button id="darkModeToggle" class="text-sm font-semibold px-3 py-2 rounded-full border border-slate-200 bg-white text-slate-600">🌙 Dark</button>
+        <a href="index.html" class="text-sm font-semibold text-teal-700 hover:text-teal-800">Back to tickets</a>
+      </div>
     </div>
   </header>
 
@@ -188,6 +224,26 @@
     const API_BASE = window.location.origin === "null"
       ? "https://web-production-031df.up.railway.app"
       : window.location.origin;
+
+    // Dark mode functionality
+    const darkModeToggle = document.getElementById("darkModeToggle");
+
+    function initDarkMode() {
+      const savedDarkMode = localStorage.getItem("darkMode") === "true";
+      if (savedDarkMode) {
+        document.documentElement.classList.add("dark-mode");
+        darkModeToggle.textContent = "☀️ Light";
+      }
+    }
+
+    darkModeToggle.addEventListener("click", () => {
+      document.documentElement.classList.toggle("dark-mode");
+      const isDarkMode = document.documentElement.classList.contains("dark-mode");
+      localStorage.setItem("darkMode", isDarkMode);
+      darkModeToggle.textContent = isDarkMode ? "☀️ Light" : "🌙 Dark";
+    });
+
+    initDarkMode();
     const params = new URLSearchParams(window.location.search);
     const ticketIdParam = params.get("id");
 
