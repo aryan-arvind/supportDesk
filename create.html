@@ -12,41 +12,79 @@
     :root {
       --brand: #0f766e;
       --brand-dark: #0b4f49;
-      --ink: #0b1220;
-      --muted: #6b7280;
-      --paper: #f4f6fb;
-      --aqua: #6ee7b7;
-      --sky: #93c5fd;
+      --ink: #0f172a;
+      --muted: #64748b;
+      --paper: #f8fafc;
+      --header-bg: rgba(255, 255, 255, 0.85);
+      --header-border: #e2e8f0;
+      --card-bg: #ffffff;
+      --card-border: rgba(226, 232, 240, 0.8);
+      --input-bg: #ffffff;
+      --input-border: #e2e8f0;
+      
+      --aqua: #0d9488;
+      --sky: #3b82f6;
     }
     html.dark-mode {
-      --ink: #f1f5f9;
+      --ink: #f8fafc;
       --muted: #94a3b8;
-      --paper: #0f172a;
+      --paper: #090d16;
+      --header-bg: rgba(15, 23, 42, 0.85);
+      --header-border: #1e293b;
+      --card-bg: #111827;
+      --card-border: #1e293b;
+      --input-bg: #1f2937;
+      --input-border: #374151;
+
+      --aqua: #14b8a6;
+      --sky: #60a5fa;
     }
     html.dark-mode body {
-      background: var(--paper);
-      color: var(--ink);
-    }
-    html.dark-mode .card {
-      background: #1e293b;
-      border-color: rgba(51, 65, 85, 0.9);
-    }
-    html.dark-mode .glass {
-      background: rgba(30, 41, 59, 0.85);
+      background-color: var(--paper) !important;
+      color: var(--ink) !important;
     }
     html.dark-mode header {
-      background: rgba(30, 41, 59, 0.8) !important;
-      border-color: rgba(71, 85, 105, 0.3);
+      background-color: var(--header-bg) !important;
+      border-color: var(--header-border) !important;
+    }
+    html.dark-mode .card {
+      background-color: var(--card-bg) !important;
+      border-color: var(--card-border) !important;
+    }
+    html.dark-mode .glass {
+      background-color: rgba(17, 24, 39, 0.85) !important;
     }
     html.dark-mode .bg-white {
-      background: #1e293b;
-      color: var(--ink);
+      background-color: var(--card-bg) !important;
+      color: var(--ink) !important;
     }
-    html.dark-mode .text-slate-600, html.dark-mode .text-slate-700, html.dark-mode .text-slate-500, html.dark-mode .text-slate-400 {
-      color: var(--muted);
+    html.dark-mode .border-slate-200,
+    html.dark-mode .border-slate-100 {
+      border-color: var(--card-border) !important;
     }
-    html.dark-mode .border-slate-200 {
-      border-color: rgba(71, 85, 105, 0.3);
+    html.dark-mode .text-slate-900,
+    html.dark-mode .text-slate-800,
+    html.dark-mode .text-slate-700,
+    html.dark-mode .text-slate-600,
+    html.dark-mode .text-slate-500,
+    html.dark-mode .text-slate-400 {
+      color: var(--ink) !important;
+    }
+    html.dark-mode .text-slate-500,
+    html.dark-mode .text-slate-400 {
+      color: var(--muted) !important;
+    }
+    html.dark-mode input,
+    html.dark-mode select,
+    html.dark-mode textarea {
+      background-color: var(--input-bg) !important;
+      border-color: var(--input-border) !important;
+      color: var(--ink) !important;
+    }
+    html.dark-mode input::placeholder,
+    html.dark-mode textarea::placeholder {
+      color: var(--muted) !important;
+      opacity: 0.6;
     }
     body {
       font-family: "Manrope", sans-serif;

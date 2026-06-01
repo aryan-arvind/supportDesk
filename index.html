@@ -12,63 +12,130 @@
     :root {
       --brand: #0f766e;
       --brand-dark: #0b4f49;
-      --ink: #0b1220;
-      --muted: #6b7280;
-      --paper: #f4f6fb;
-      --aqua: #6ee7b7;
-      --sky: #93c5fd;
-      --amber: #fcd34d;
-      --rose: #fb7185;
+      --ink: #0f172a;
+      --muted: #64748b;
+      --paper: #f8fafc;
+      --sidebar-bg: #ffffff;
+      --sidebar-border: #e2e8f0;
+      --header-bg: rgba(255, 255, 255, 0.85);
+      --header-border: #e2e8f0;
+      --card-bg: #ffffff;
+      --card-border: rgba(226, 232, 240, 0.8);
+      --input-bg: #ffffff;
+      --input-border: #e2e8f0;
+      --table-header: #f8fafc;
+      --table-row-hover: #f1f5f9;
+      --nav-active-bg: var(--brand);
+      --nav-active-text: #ffffff;
+      --nav-inactive-text: #475569;
+      --nav-inactive-hover: #f1f5f9;
+      
+      --aqua: #0d9488;
+      --sky: #3b82f6;
+      --amber: #d97706;
+      --rose: #e11d48;
     }
     html.dark-mode {
-      --ink: #f1f5f9;
+      --ink: #f8fafc;
       --muted: #94a3b8;
-      --paper: #0f172a;
+      --paper: #090d16;
+      --sidebar-bg: #0f172a;
+      --sidebar-border: #1e293b;
+      --header-bg: rgba(15, 23, 42, 0.85);
+      --header-border: #1e293b;
+      --card-bg: #111827;
+      --card-border: #1e293b;
+      --input-bg: #1f2937;
+      --input-border: #374151;
+      --table-header: #1f2937;
+      --table-row-hover: rgba(31, 41, 55, 0.5);
+      --nav-active-bg: var(--brand);
+      --nav-active-text: #ffffff;
+      --nav-inactive-text: #94a3b8;
+      --nav-inactive-hover: #1e293b;
+
+      --aqua: #14b8a6;
+      --sky: #60a5fa;
+      --amber: #fbbf24;
+      --rose: #f43f5e;
     }
     html.dark-mode body {
-      background: var(--paper);
-      color: var(--ink);
-    }
-    html.dark-mode .card {
-      background: #1e293b;
-      border-color: rgba(51, 65, 85, 0.9);
-    }
-    html.dark-mode .glass {
-      background: rgba(30, 41, 59, 0.85);
-    }
-    html.dark-mode .chip {
-      background: rgba(51, 65, 85, 0.85);
-    }
-    html.dark-mode .pill {
-      background: rgba(30, 41, 59, 0.9);
-      border-color: rgba(71, 85, 105, 0.25);
-    }
-    html.dark-mode .soft-border {
-      border-color: rgba(71, 85, 105, 0.25);
+      background-color: var(--paper) !important;
+      color: var(--ink) !important;
     }
     html.dark-mode aside {
-      background: rgba(30, 41, 59, 0.7) !important;
-      border-color: rgba(71, 85, 105, 0.3);
+      background-color: var(--sidebar-bg) !important;
+      border-color: var(--sidebar-border) !important;
     }
     html.dark-mode header {
-      background: rgba(30, 41, 59, 0.8) !important;
-      border-color: rgba(71, 85, 105, 0.3);
+      background-color: var(--header-bg) !important;
+      border-color: var(--header-border) !important;
+    }
+    html.dark-mode .card {
+      background-color: var(--card-bg) !important;
+      border-color: var(--card-border) !important;
+    }
+    html.dark-mode .glass {
+      background-color: rgba(17, 24, 39, 0.85) !important;
+    }
+    html.dark-mode .chip {
+      background-color: rgba(31, 41, 55, 0.85) !important;
+      border-color: var(--card-border) !important;
+    }
+    html.dark-mode .pill {
+      background-color: rgba(15, 23, 42, 0.9) !important;
+      border-color: var(--card-border) !important;
+    }
+    html.dark-mode .soft-border {
+      border-color: var(--card-border) !important;
     }
     html.dark-mode .bg-white {
-      background: #1e293b;
-      color: var(--ink);
-    }
-    html.dark-mode .text-slate-600, html.dark-mode .text-slate-700, html.dark-mode .text-slate-500 {
-      color: var(--muted);
-    }
-    html.dark-mode .border-slate-200 {
-      border-color: rgba(71, 85, 105, 0.3);
+      background-color: var(--card-bg) !important;
+      color: var(--ink) !important;
     }
     html.dark-mode .bg-slate-50 {
-      background: #334155;
+      background-color: var(--table-header) !important;
     }
-    html.dark-mode .divide-slate-100 {
-      border-color: rgba(71, 85, 105, 0.3);
+    html.dark-mode .bg-slate-100 {
+      background-color: #1e293b !important;
+    }
+    html.dark-mode .bg-slate-900 {
+      background-color: var(--brand) !important;
+    }
+    html.dark-mode .border-slate-200,
+    html.dark-mode .border-slate-100,
+    html.dark-mode .divide-slate-100 > * + * {
+      border-color: var(--card-border) !important;
+    }
+    html.dark-mode .text-slate-900,
+    html.dark-mode .text-slate-800,
+    html.dark-mode .text-slate-700,
+    html.dark-mode .text-slate-600,
+    html.dark-mode .text-slate-500,
+    html.dark-mode .text-slate-400 {
+      color: var(--ink) !important;
+    }
+    html.dark-mode .text-slate-500,
+    html.dark-mode .text-slate-400 {
+      color: var(--muted) !important;
+    }
+    html.dark-mode input {
+      background-color: var(--input-bg) !important;
+      border-color: var(--input-border) !important;
+      color: var(--ink) !important;
+    }
+    html.dark-mode input::placeholder {
+      color: var(--muted) !important;
+      opacity: 0.6;
+    }
+    html.dark-mode thead {
+      background-color: var(--table-header) !important;
+    }
+    html.dark-mode thead th {
+      color: var(--muted) !important;
+    }
+    html.dark-mode tr.hover\:bg-slate-50\/70:hover {
+      background-color: var(--table-row-hover) !important;
     }
     body {
       font-family: "Manrope", sans-serif;
@@ -477,7 +544,7 @@
         "In Progress": "bg-amber-50 text-amber-700 border border-amber-100",
         "Closed": "bg-slate-100 text-slate-700 border border-slate-200",
       };
-      return `<span class="px-2.5 py-1 rounded-full text-xs font-semibold ${styles[status] || "bg-slate-100 text-slate-600"}">${status}</span>`;
+      return `<span class="px-2.5 py-1 rounded-full text-xs font-semibold whitespace-nowrap ${styles[status] || "bg-slate-100 text-slate-600"}">${status}</span>`;
     }
 
     function priorityBadge(priority) {
@@ -487,7 +554,7 @@
         "Medium": "bg-sky-50 text-sky-700 border border-sky-100",
         "Low": "bg-slate-100 text-slate-700 border border-slate-200",
       };
-      return `<span class="px-2.5 py-1 rounded-full text-xs font-semibold ${styles[priority] || "bg-slate-100 text-slate-600"}">${priority}</span>`;
+      return `<span class="px-2.5 py-1 rounded-full text-xs font-semibold whitespace-nowrap ${styles[priority] || "bg-slate-100 text-slate-600"}">${priority}</span>`;
     }
 
     function setActiveStatus(value) {

@@ -49,6 +49,7 @@ class TicketCreateResponse(BaseModel):
 class TicketListResponse(BaseModel):
     ticket_id: str
     customer_name: str
+    customer_email: str
     subject: str
     status: str
     priority: str
@@ -224,6 +225,7 @@ def list_tickets(
             TicketListResponse(
                 ticket_id=row["ticket_id"],
                 customer_name=row["customer_name"],
+                customer_email=row["customer_email"],
                 subject=row["subject"],
                 status=row["status"],
                 priority=row["priority"],
