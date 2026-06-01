@@ -184,11 +184,15 @@
         </div>
       </div>
 
-      <div class="mt-6 grid gap-4 md:grid-cols-2">
+      <div class="mt-6 grid gap-4 md:grid-cols-3">
         <div class="bg-slate-50 rounded-2xl p-4">
           <p class="text-xs uppercase tracking-wide text-slate-500">Customer</p>
           <p id="customerName" class="text-lg font-semibold"></p>
           <p id="customerEmail" class="text-sm text-slate-500"></p>
+        </div>
+        <div class="bg-slate-50 rounded-2xl p-4">
+          <p class="text-xs uppercase tracking-wide text-slate-500">Assignee</p>
+          <p id="ticketAssignee" class="text-lg font-semibold text-teal-700"></p>
         </div>
         <div class="bg-slate-50 rounded-2xl p-4">
           <p class="text-xs uppercase tracking-wide text-slate-500">Created</p>
@@ -204,7 +208,7 @@
 
     <section id="actionsCard" class="hidden card glass rounded-3xl p-6 fade-up" style="animation-delay: 0.05s;">
       <h2 class="display text-lg font-semibold mb-4">Manage Ticket</h2>
-      <div class="grid gap-4 sm:grid-cols-2 md:grid-cols-3 items-end">
+      <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 items-end">
         <div>
           <label class="text-sm font-semibold text-slate-700" for="statusSelect">Update Status</label>
           <select id="statusSelect" class="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 focus:outline-none focus:ring-2 focus:ring-teal-500">
@@ -222,7 +226,16 @@
             <option value="Critical">Critical</option>
           </select>
         </div>
-        <button id="saveActions" class="rounded-full bg-gradient-to-r from-teal-700 to-emerald-600 px-5 py-3 text-white text-sm font-semibold shadow-sm hover:shadow-md transition">Save Updates</button>
+        <div>
+          <label class="text-sm font-semibold text-slate-700" for="assigneeSelect">Assignee</label>
+          <select id="assigneeSelect" class="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 focus:outline-none focus:ring-2 focus:ring-teal-500">
+            <option value="Unassigned">Unassigned</option>
+            <option value="Support Agent A">Support Agent A</option>
+            <option value="Support Agent B">Support Agent B</option>
+            <option value="Senior Escalations">Senior Escalations</option>
+          </select>
+        </div>
+        <button id="saveActions" class="w-full rounded-full bg-gradient-to-r from-teal-700 to-emerald-600 px-5 py-3 text-white text-sm font-semibold shadow-sm hover:shadow-md transition">Save Updates</button>
       </div>
       <p id="actionsMessage" class="mt-3 text-sm"></p>
     </section>
@@ -261,12 +274,22 @@
           <div class="mt-4 accent-bar"></div>
         </div>
 
-        <div class="card rounded-3xl p-6 shadow-soft fade-up" style="animation-delay: 0.12s;">
-          <p class="text-xs uppercase tracking-[0.2em] text-slate-400">Quick actions</p>
+        <div class="card rounded-3xl p-6 shadow-soft" style="animation-delay: 0.12s;">
+          <p class="text-xs uppercase tracking-[0.2em] text-slate-400">Canned Templates</p>
           <div class="mt-4 space-y-2 text-sm">
-            <button class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-2 text-left text-slate-600">Request more details</button>
-            <button class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-2 text-left text-slate-600">Assign to teammate</button>
-            <button class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-2 text-left text-slate-600">Send resolution summary</button>
+            <button data-template="refund" class="template-btn w-full rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-left text-slate-600 hover:bg-slate-50 transition">💸 Refund Template</button>
+            <button data-template="exchange" class="template-btn w-full rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-left text-slate-600 hover:bg-slate-50 transition">🔄 Exchange Template</button>
+            <button data-template="help" class="template-btn w-full rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-left text-slate-600 hover:bg-slate-50 transition">🤝 Assistance Template</button>
+          </div>
+        </div>
+
+        <div class="card rounded-3xl p-6 shadow-soft" style="animation-delay: 0.16s;">
+          <p class="text-xs uppercase tracking-[0.2em] text-slate-400">Escalations</p>
+          <div class="mt-4 space-y-2 text-sm">
+            <button id="escalateBtn" class="w-full rounded-2xl border border-red-200 bg-red-50/50 html.dark-mode:bg-red-950/20 html.dark-mode:border-red-900 px-4 py-2.5 text-left text-red-700 font-semibold hover:bg-red-50 transition flex items-center justify-between">
+              <span>🚨 Escalate to Senior</span>
+              <span class="text-xs bg-red-100 text-red-800 px-1.5 py-0.5 rounded">Critical</span>
+            </button>
           </div>
         </div>
       </aside>
@@ -369,10 +392,12 @@
       ticketSubject.textContent = data.subject;
       customerName.textContent = data.customer_name;
       customerEmail.textContent = data.customer_email;
+      document.getElementById("ticketAssignee").textContent = data.assignee || "Unassigned";
       createdAt.textContent = formatDate(data.created_at);
       ticketDescription.textContent = data.description;
       statusSelect.value = data.status;
       prioritySelect.value = data.priority;
+      document.getElementById("assigneeSelect").value = data.assignee || "Unassigned";
       setBadgeStyles(data.status, data.priority);
       renderNotes(data.notes || []);
 
@@ -408,7 +433,8 @@
       actionsMessage.textContent = "";
       const payload = {
         status: statusSelect.value,
-        priority: prioritySelect.value
+        priority: prioritySelect.value,
+        assignee: document.getElementById("assigneeSelect").value
       };
 
       // Update the ticket status and priority.
@@ -470,6 +496,52 @@
       } catch (error) {
         noteMessage.textContent = error.message || "Unable to add note.";
         noteMessage.className = "mt-2 text-sm text-rose-700";
+      }
+    });
+
+    // Canned templates insertion
+    const templates = {
+      refund: "We have reviewed your request. A refund has been processed. Please allow 3-5 business days for the funds to reflect in your account.",
+      exchange: "We would be happy to exchange your item. Please return the item in its original packaging. Once received, we will ship out the replacement.",
+      help: "Thank you for reaching out. To assist you further, could you please provide additional details or screenshots showing the issue you've encountered?"
+    };
+
+    document.querySelectorAll(".template-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const type = btn.dataset.template;
+        if (templates[type]) {
+          noteInput.value = templates[type];
+          noteMessage.textContent = "Template injected into note input field.";
+          noteMessage.className = "mt-2 text-sm text-emerald-700";
+        }
+      });
+    });
+
+    // Escalate to Senior handler
+    document.getElementById("escalateBtn").addEventListener("click", async () => {
+      actionsMessage.textContent = "";
+      const payload = {
+        assignee: "Senior Escalations",
+        priority: "Critical"
+      };
+
+      try {
+        const response = await fetch(`${API_BASE}/api/tickets/${encodeURIComponent(ticketIdParam)}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
+        });
+        if (!response.ok) {
+          throw new Error("Failed to escalate ticket");
+        }
+        actionsMessage.textContent = "Ticket escalated to Senior Escalations and marked Critical.";
+        actionsMessage.className = "mt-3 text-sm text-emerald-700";
+        await loadTicket();
+      } catch (error) {
+        actionsMessage.textContent = error.message || "Unable to escalate ticket.";
+        actionsMessage.className = "mt-3 text-sm text-rose-700";
       }
     });
 

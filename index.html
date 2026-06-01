@@ -220,6 +220,26 @@
         radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.08), transparent 35%),
         radial-gradient(circle at 80% 0%, rgba(16, 185, 129, 0.12), transparent 40%);
     }
+    .toast-success {
+      background-color: #f0fdf4 !important;
+      color: #15803d !important;
+      border-color: #bbf7d0 !important;
+    }
+    .toast-error {
+      background-color: #fff1f2 !important;
+      color: #b91c1c !important;
+      border-color: #fecdd3 !important;
+    }
+    html.dark-mode .toast-success {
+      background-color: #0d201f !important;
+      color: #4df3e6 !important;
+      border-color: #115e59 !important;
+    }
+    html.dark-mode .toast-error {
+      background-color: #270e12 !important;
+      color: #fda4af !important;
+      border-color: #9f1239 !important;
+    }
   </style>
 </head>
 <body class="min-h-screen">
@@ -250,10 +270,10 @@
       <div class="mt-8">
         <p class="text-xs uppercase tracking-[0.2em] text-slate-400">Navigation</p>
         <nav class="mt-3 space-y-2 text-sm">
-          <a href="index.html" class="flex items-center gap-3 px-3 py-2 rounded-xl bg-slate-900 text-white font-semibold cursor-pointer">
+          <button id="dashboardNav" class="w-full flex items-center gap-3 px-3 py-2 rounded-xl bg-slate-900 text-white font-semibold cursor-pointer">
             <span class="h-8 w-8 rounded-xl bg-white/10 grid place-items-center">▣</span>
             Dashboard
-          </a>
+          </button>
           <button id="ticketsNav" class="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-slate-600 cursor-pointer hover:bg-slate-100 transition">
             <span class="h-8 w-8 rounded-xl bg-slate-100 grid place-items-center">✉</span>
             Tickets
@@ -262,10 +282,14 @@
             <span class="h-8 w-8 rounded-xl bg-slate-100 grid place-items-center">⌁</span>
             Knowledge
           </button>
-          <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-xl text-slate-600 cursor-pointer" aria-disabled="true" title="Placeholder">
+          <button id="analyticsNav" class="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-slate-600 cursor-pointer hover:bg-slate-100 transition" title="Analytics dashboard">
             <span class="h-8 w-8 rounded-xl bg-slate-100 grid place-items-center">◔</span>
             Analytics
-          </a>
+          </button>
+          <button id="syncInboxBtn" class="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-slate-600 cursor-pointer hover:bg-slate-100 transition" title="Sync inbound support emails">
+            <span class="h-8 w-8 rounded-xl bg-slate-100 grid place-items-center">🔄</span>
+            Sync Inbox
+          </button>
         </nav>
       </div>
 
@@ -318,150 +342,287 @@
       </header>
 
       <main class="max-w-6xl mx-auto px-4 py-8 w-full">
-        <section class="grid gap-4 lg:grid-cols-[2.2fr_1fr]">
-          <div class="card glass rounded-3xl p-6 fade-up dot-grid glass-grid">
-            <div class="flex flex-wrap items-center justify-between gap-3">
-              <div>
-                <p class="text-xs uppercase tracking-[0.2em] text-slate-500">Search</p>
-                <h2 class="display text-lg font-semibold">Find tickets fast</h2>
-              </div>
-              <span class="chip text-xs px-3 py-1 rounded-full text-slate-500">Live</span>
-            </div>
-            <input id="searchInput" type="text" placeholder="Search by ticket, name, email, or subject" class="mt-4 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 focus:outline-none focus:ring-2 focus:ring-teal-500" />
-            <p class="text-xs text-slate-500 mt-2">Results update as you type.</p>
-          </div>
-          <div class="card glass rounded-3xl p-6 fade-up glass-grid" style="animation-delay: 0.05s;">
-            <p class="text-xs uppercase tracking-[0.2em] text-slate-500">Advanced filters</p>
-            <h2 class="display text-lg font-semibold mt-1">Pipeline view</h2>
-            <div class="mt-4 flex flex-col gap-3">
-              <div>
-                <p class="text-xs text-slate-500 mb-2">Status</p>
-                <div class="flex flex-wrap gap-2">
-                  <button data-status="" class="status-btn px-4 py-2 rounded-full text-sm font-semibold bg-slate-900 text-white">All</button>
-                  <button data-status="Open" class="status-btn px-4 py-2 rounded-full text-sm font-semibold bg-white text-slate-700 border border-slate-200">Open</button>
-                  <button data-status="In Progress" class="status-btn px-4 py-2 rounded-full text-sm font-semibold bg-white text-slate-700 border border-slate-200">In Progress</button>
-                  <button data-status="Closed" class="status-btn px-4 py-2 rounded-full text-sm font-semibold bg-white text-slate-700 border border-slate-200">Closed</button>
+        <!-- Tickets Inbox View -->
+        <div id="ticketsInboxView" class="space-y-6">
+          <section class="grid gap-4 lg:grid-cols-[2.2fr_1fr]">
+            <div class="card glass rounded-3xl p-6 fade-up dot-grid glass-grid">
+              <div class="flex flex-wrap items-center justify-between gap-3">
+                <div>
+                  <p class="text-xs uppercase tracking-[0.2em] text-slate-500">Search</p>
+                  <h2 class="display text-lg font-semibold">Find tickets fast</h2>
                 </div>
+                <span class="chip text-xs px-3 py-1 rounded-full text-slate-500">Live</span>
               </div>
-              <div>
-                <p class="text-xs text-slate-500 mb-2">Priority</p>
-                <div class="flex flex-wrap gap-2">
-                  <button data-priority="" class="priority-btn px-4 py-2 rounded-full text-sm font-semibold bg-white text-slate-700 border border-slate-200">All</button>
-                  <button data-priority="Low" class="priority-btn px-4 py-2 rounded-full text-sm font-semibold bg-white text-slate-700 border border-slate-200">Low</button>
-                  <button data-priority="Medium" class="priority-btn px-4 py-2 rounded-full text-sm font-semibold bg-white text-slate-700 border border-slate-200">Medium</button>
-                  <button data-priority="High" class="priority-btn px-4 py-2 rounded-full text-sm font-semibold bg-white text-slate-700 border border-slate-200">High</button>
-                  <button data-priority="Critical" class="priority-btn px-4 py-2 rounded-full text-sm font-semibold bg-white text-slate-700 border border-slate-200">Critical</button>
-                </div>
-              </div>
+              <input id="searchInput" type="text" placeholder="Search by ticket, name, email, or subject" class="mt-4 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 focus:outline-none focus:ring-2 focus:ring-teal-500" />
+              <p class="text-xs text-slate-500 mt-2">Results update as you type.</p>
             </div>
-          </div>
-        </section>
-
-        <section class="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          <div class="card rounded-2xl p-4 shadow-soft fade-up glass-grid">
-            <p class="text-xs uppercase tracking-[0.2em] text-slate-400">Total</p>
-            <p id="statTotal" class="display text-2xl font-semibold mt-2">0</p>
-            <p class="text-xs text-slate-500 mt-1">Tickets in view</p>
-            <div class="mt-4 sparkline"></div>
-          </div>
-          <div class="card rounded-2xl p-4 shadow-soft fade-up glass-grid" style="animation-delay: 0.04s;">
-            <p class="text-xs uppercase tracking-[0.2em] text-slate-400">Open</p>
-            <p id="statOpen" class="display text-2xl font-semibold mt-2">0</p>
-            <p class="text-xs text-slate-500 mt-1">Needs response</p>
-            <div class="mt-4 accent-bar accent-blue"></div>
-          </div>
-          <div class="card rounded-2xl p-4 shadow-soft fade-up glass-grid" style="animation-delay: 0.08s;">
-            <p class="text-xs uppercase tracking-[0.2em] text-slate-400">In progress</p>
-            <p id="statProgress" class="display text-2xl font-semibold mt-2">0</p>
-            <p class="text-xs text-slate-500 mt-1">Being handled</p>
-            <div class="mt-4 accent-bar accent-amber"></div>
-          </div>
-          <div class="card rounded-2xl p-4 shadow-soft fade-up glass-grid" style="animation-delay: 0.12s;">
-            <p class="text-xs uppercase tracking-[0.2em] text-slate-400">Closed</p>
-            <p id="statClosed" class="display text-2xl font-semibold mt-2">0</p>
-            <p class="text-xs text-slate-500 mt-1">Resolved today</p>
-            <div class="mt-4 accent-bar accent-rose"></div>
-          </div>
-        </section>
-
-        <section class="mt-6 grid gap-6 lg:grid-cols-[2.1fr_1fr]">
-          <div class="card glass rounded-3xl fade-up" style="animation-delay: 0.1s;">
-            <div class="px-6 py-5 border-b border-slate-100 flex flex-wrap items-center justify-between gap-3">
-              <div>
-                <h2 class="display text-lg font-semibold">Tickets</h2>
-                <p class="text-xs text-slate-500">Inbox-style overview of customer requests</p>
-              </div>
-              <div class="flex items-center gap-2">
-                <button class="pill px-3 py-1 rounded-full text-xs text-slate-500">Newest</button>
-                <span id="ticketCount" class="chip text-xs px-3 py-1 rounded-full text-slate-600">0 results</span>
-              </div>
-            </div>
-            <div class="overflow-x-auto">
-              <table class="min-w-full text-left text-sm">
-                <thead class="bg-slate-50/70 text-slate-600">
-                  <tr>
-                    <th class="px-6 py-3 font-semibold">Ticket ID</th>
-                    <th class="px-6 py-3 font-semibold">Customer</th>
-                    <th class="px-6 py-3 font-semibold">Subject</th>
-                    <th class="px-6 py-3 font-semibold">Status</th>
-                    <th class="px-6 py-3 font-semibold">Priority</th>
-                    <th class="px-6 py-3 font-semibold">Created</th>
-                  </tr>
-                </thead>
-                <tbody id="ticketTable" class="divide-y divide-slate-100"></tbody>
-              </table>
-            </div>
-            <div id="emptyState" class="hidden px-6 py-12 text-center text-slate-500">
-              No tickets found. Try adjusting your filters.
-            </div>
-          </div>
-
-          <aside class="grid gap-4">
-            <div class="card rounded-3xl p-5 shadow-soft fade-up glass-grid" style="animation-delay: 0.12s;">
-              <div class="flex items-center justify-between">
-                <p class="text-xs uppercase tracking-[0.2em] text-slate-400">Activity</p>
-                <span class="chip text-xs px-2 py-1 rounded-full text-slate-500">Today</span>
-              </div>
-              <div class="mt-4 space-y-3 text-sm text-slate-600">
-                <div class="flex items-start gap-3">
-                  <span class="h-2.5 w-2.5 mt-1 rounded-full bg-emerald-500"></span>
-                  <div>
-                    <p class="font-semibold text-slate-700">New customer requests</p>
-                    <p class="text-xs text-slate-500">Check latest ticket IDs.</p>
+            <div class="card glass rounded-3xl p-6 fade-up glass-grid" style="animation-delay: 0.05s;">
+              <p class="text-xs uppercase tracking-[0.2em] text-slate-500">Advanced filters</p>
+              <h2 class="display text-lg font-semibold mt-1">Pipeline view</h2>
+              <div class="mt-4 flex flex-col gap-3">
+                <div>
+                  <p class="text-xs text-slate-500 mb-2">Status</p>
+                  <div class="flex flex-wrap gap-2">
+                    <button data-status="" class="status-btn px-4 py-2 rounded-full text-sm font-semibold bg-slate-900 text-white">All</button>
+                    <button data-status="Open" class="status-btn px-4 py-2 rounded-full text-sm font-semibold bg-white text-slate-700 border border-slate-200">Open</button>
+                    <button data-status="In Progress" class="status-btn px-4 py-2 rounded-full text-sm font-semibold bg-white text-slate-700 border border-slate-200">In Progress</button>
+                    <button data-status="Closed" class="status-btn px-4 py-2 rounded-full text-sm font-semibold bg-white text-slate-700 border border-slate-200">Closed</button>
                   </div>
                 </div>
-                <div class="flex items-start gap-3">
-                  <span class="h-2.5 w-2.5 mt-1 rounded-full bg-amber-400"></span>
-                  <div>
-                    <p class="font-semibold text-slate-700">In progress reviews</p>
-                    <p class="text-xs text-slate-500">Prioritize high priority items.</p>
-                  </div>
-                </div>
-                <div class="flex items-start gap-3">
-                  <span class="h-2.5 w-2.5 mt-1 rounded-full bg-slate-400"></span>
-                  <div>
-                    <p class="font-semibold text-slate-700">Closed confirmations</p>
-                    <p class="text-xs text-slate-500">Send wrap-up messages.</p>
+                <div>
+                  <p class="text-xs text-slate-500 mb-2">Priority</p>
+                  <div class="flex flex-wrap gap-2">
+                    <button data-priority="" class="priority-btn px-4 py-2 rounded-full text-sm font-semibold bg-white text-slate-700 border border-slate-200">All</button>
+                    <button data-priority="Low" class="priority-btn px-4 py-2 rounded-full text-sm font-semibold bg-white text-slate-700 border border-slate-200">Low</button>
+                    <button data-priority="Medium" class="priority-btn px-4 py-2 rounded-full text-sm font-semibold bg-white text-slate-700 border border-slate-200">Medium</button>
+                    <button data-priority="High" class="priority-btn px-4 py-2 rounded-full text-sm font-semibold bg-white text-slate-700 border border-slate-200">High</button>
+                    <button data-priority="Critical" class="priority-btn px-4 py-2 rounded-full text-sm font-semibold bg-white text-slate-700 border border-slate-200">Critical</button>
                   </div>
                 </div>
               </div>
             </div>
+          </section>
 
-            <div class="card rounded-3xl p-5 shadow-soft fade-up glass-grid" style="animation-delay: 0.16s;">
-              <p class="text-xs uppercase tracking-[0.2em] text-slate-400">Guidance</p>
-              <h3 class="display text-base font-semibold mt-2">Response checklist</h3>
-              <ul class="mt-4 space-y-2 text-sm text-slate-600">
-                <li class="flex items-center gap-2"><span class="h-1.5 w-1.5 rounded-full bg-teal-600"></span>Confirm customer details</li>
-                <li class="flex items-center gap-2"><span class="h-1.5 w-1.5 rounded-full bg-teal-600"></span>Assign priority and owner</li>
-                <li class="flex items-center gap-2"><span class="h-1.5 w-1.5 rounded-full bg-teal-600"></span>Share next steps</li>
-              </ul>
-              <div class="mt-5 flex flex-wrap gap-2">
-                <button class="pill px-3 py-1 rounded-full text-xs text-slate-600">Templates</button>
-                <button class="pill px-3 py-1 rounded-full text-xs text-slate-600">Macros</button>
+          <section class="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+            <div class="card rounded-2xl p-4 shadow-soft fade-up glass-grid">
+              <p class="text-xs uppercase tracking-[0.2em] text-slate-400">Total</p>
+              <p id="statTotal" class="display text-2xl font-semibold mt-2">0</p>
+              <p class="text-xs text-slate-500 mt-1">Tickets in view</p>
+              <div class="mt-4 sparkline"></div>
+            </div>
+            <div class="card rounded-2xl p-4 shadow-soft fade-up glass-grid" style="animation-delay: 0.04s;">
+              <p class="text-xs uppercase tracking-[0.2em] text-slate-400">Open</p>
+              <p id="statOpen" class="display text-2xl font-semibold mt-2">0</p>
+              <p class="text-xs text-slate-500 mt-1">Needs response</p>
+              <div class="mt-4 accent-bar accent-blue"></div>
+            </div>
+            <div class="card rounded-2xl p-4 shadow-soft fade-up glass-grid" style="animation-delay: 0.08s;">
+              <p class="text-xs uppercase tracking-[0.2em] text-slate-400">In progress</p>
+              <p id="statProgress" class="display text-2xl font-semibold mt-2">0</p>
+              <p class="text-xs text-slate-500 mt-1">Being handled</p>
+              <div class="mt-4 accent-bar accent-amber"></div>
+            </div>
+            <div class="card rounded-2xl p-4 shadow-soft fade-up glass-grid" style="animation-delay: 0.12s;">
+              <p class="text-xs uppercase tracking-[0.2em] text-slate-400">Closed</p>
+              <p id="statClosed" class="display text-2xl font-semibold mt-2">0</p>
+              <p class="text-xs text-slate-500 mt-1">Resolved today</p>
+              <div class="mt-4 accent-bar accent-rose"></div>
+            </div>
+          </section>
+
+          <section class="grid gap-6 lg:grid-cols-[2.1fr_1fr]">
+            <div class="card glass rounded-3xl fade-up" style="animation-delay: 0.1s;">
+              <div class="px-6 py-5 border-b border-slate-100 flex flex-wrap items-center justify-between gap-3">
+                <div>
+                  <h2 class="display text-lg font-semibold">Tickets</h2>
+                  <p class="text-xs text-slate-500">Inbox-style overview of customer requests</p>
+                </div>
+                <div class="flex items-center gap-2">
+                  <button class="pill px-3 py-1 rounded-full text-xs text-slate-500">Newest</button>
+                  <span id="ticketCount" class="chip text-xs px-3 py-1 rounded-full text-slate-600">0 results</span>
+                </div>
+              </div>
+              <div class="overflow-x-auto">
+                <table class="min-w-full text-left text-sm">
+                  <thead class="bg-slate-50/70 text-slate-600">
+                    <tr>
+                      <th class="px-6 py-3 font-semibold">Ticket ID</th>
+                      <th class="px-6 py-3 font-semibold">Customer</th>
+                      <th class="px-6 py-3 font-semibold">Subject</th>
+                      <th class="px-6 py-3 font-semibold">Status</th>
+                      <th class="px-6 py-3 font-semibold">Priority</th>
+                      <th class="px-6 py-3 font-semibold">Created</th>
+                    </tr>
+                  </thead>
+                  <tbody id="ticketTable" class="divide-y divide-slate-100"></tbody>
+                </table>
+              </div>
+              <div id="emptyState" class="hidden px-6 py-12 text-center text-slate-500">
+                No tickets found. Try adjusting your filters.
               </div>
             </div>
-          </aside>
-        </section>
+
+            <aside class="grid gap-4">
+              <div class="card rounded-3xl p-5 shadow-soft fade-up glass-grid" style="animation-delay: 0.12s;">
+                <div class="flex items-center justify-between">
+                  <p class="text-xs uppercase tracking-[0.2em] text-slate-400">Activity</p>
+                  <span class="chip text-xs px-2 py-1 rounded-full text-slate-500">Today</span>
+                </div>
+                <div class="mt-4 space-y-3 text-sm text-slate-600">
+                  <div class="flex items-start gap-3">
+                    <span class="h-2.5 w-2.5 mt-1 rounded-full bg-emerald-500"></span>
+                    <div>
+                      <p class="font-semibold text-slate-700">New customer requests</p>
+                      <p class="text-xs text-slate-500">Check latest ticket IDs.</p>
+                    </div>
+                  </div>
+                  <div class="flex items-start gap-3">
+                    <span class="h-2.5 w-2.5 mt-1 rounded-full bg-amber-400"></span>
+                    <div>
+                      <p class="font-semibold text-slate-700">In progress reviews</p>
+                      <p class="text-xs text-slate-500">Prioritize high priority items.</p>
+                    </div>
+                  </div>
+                  <div class="flex items-start gap-3">
+                    <span class="h-2.5 w-2.5 mt-1 rounded-full bg-slate-400"></span>
+                    <div>
+                      <p class="font-semibold text-slate-700">Closed confirmations</p>
+                      <p class="text-xs text-slate-500">Send wrap-up messages.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="card rounded-3xl p-5 shadow-soft fade-up glass-grid" style="animation-delay: 0.16s;">
+                <p class="text-xs uppercase tracking-[0.2em] text-slate-400">Guidance</p>
+                <h3 class="display text-base font-semibold mt-2">Response checklist</h3>
+                <ul class="mt-4 space-y-2 text-sm text-slate-600">
+                  <li class="flex items-center gap-2"><span class="h-1.5 w-1.5 rounded-full bg-teal-600"></span>Confirm customer details</li>
+                  <li class="flex items-center gap-2"><span class="h-1.5 w-1.5 rounded-full bg-teal-600"></span>Assign priority and owner</li>
+                  <li class="flex items-center gap-2"><span class="h-1.5 w-1.5 rounded-full bg-teal-600"></span>Share next steps</li>
+                </ul>
+                <div class="mt-5 flex flex-wrap gap-2">
+                  <button class="pill px-3 py-1 rounded-full text-xs text-slate-600">Templates</button>
+                  <button class="pill px-3 py-1 rounded-full text-xs text-slate-600">Macros</button>
+                </div>
+              </div>
+            </aside>
+          </section>
+        </div>
+
+        <!-- Interactive Analytics Dashboard View -->
+        <div id="analyticsDashboardView" class="hidden fade-up space-y-6">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-xs uppercase tracking-[0.2em] text-slate-500">Analytics Panel</p>
+              <h2 class="display text-2xl font-bold">Performance & Volume Metrics</h2>
+              <p class="text-xs text-slate-500">Real-time statistics of the support desk pipeline.</p>
+            </div>
+            <button id="closeAnalyticsBtn" class="pill px-4 py-2 rounded-full text-xs font-semibold text-slate-600">Back to Inbox</button>
+          </div>
+
+          <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+            <div class="card rounded-3xl p-5 shadow-soft glass-grid">
+              <p class="text-xs uppercase tracking-[0.2em] text-slate-400">Avg Response Time</p>
+              <p class="display text-3xl font-bold mt-2 text-teal-700">1.8 hrs</p>
+              <p class="text-xs text-slate-500 mt-1">↓ 15% from yesterday</p>
+            </div>
+            <div class="card rounded-3xl p-5 shadow-soft glass-grid">
+              <p class="text-xs uppercase tracking-[0.2em] text-slate-400">Resolution Rate</p>
+              <p class="display text-3xl font-bold mt-2 text-blue-600">94.2%</p>
+              <p class="text-xs text-slate-500 mt-1">↑ 2.1% this week</p>
+            </div>
+            <div class="card rounded-3xl p-5 shadow-soft glass-grid">
+              <p class="text-xs uppercase tracking-[0.2em] text-slate-400">SLA Target Met</p>
+              <p class="display text-3xl font-bold mt-2 text-amber-600">98.5%</p>
+              <p class="text-xs text-slate-500 mt-1">Goal: >95.0%</p>
+            </div>
+            <div class="card rounded-3xl p-5 shadow-soft glass-grid">
+              <p class="text-xs uppercase tracking-[0.2em] text-slate-400">Customer CSAT</p>
+              <p class="display text-3xl font-bold mt-2 text-rose-600">4.8 / 5</p>
+              <p class="text-xs text-slate-500 mt-1">Based on 142 responses</p>
+            </div>
+          </div>
+
+          <div class="grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
+            <div class="card rounded-3xl p-6 shadow-soft">
+              <h3 class="display text-lg font-bold mb-4">Volume by Priority Level</h3>
+              <div class="space-y-4">
+                <div>
+                  <div class="flex justify-between text-sm mb-1">
+                    <span class="font-medium text-slate-700">Critical Priority</span>
+                    <span id="priorityCriticalCount" class="font-semibold text-rose-600">0 tickets (0%)</span>
+                  </div>
+                  <div class="w-full bg-slate-100 rounded-full h-3">
+                    <div id="priorityCriticalBar" class="bg-rose-500 h-3 rounded-full transition-all duration-500" style="width: 0%"></div>
+                  </div>
+                </div>
+                <div>
+                  <div class="flex justify-between text-sm mb-1">
+                    <span class="font-medium text-slate-700">High Priority</span>
+                    <span id="priorityHighCount" class="font-semibold text-orange-600">0 tickets (0%)</span>
+                  </div>
+                  <div class="w-full bg-slate-100 rounded-full h-3">
+                    <div id="priorityHighBar" class="bg-orange-500 h-3 rounded-full transition-all duration-500" style="width: 0%"></div>
+                  </div>
+                </div>
+                <div>
+                  <div class="flex justify-between text-sm mb-1">
+                    <span class="font-medium text-slate-700">Medium Priority</span>
+                    <span id="priorityMediumCount" class="font-semibold text-teal-600">0 tickets (0%)</span>
+                  </div>
+                  <div class="w-full bg-slate-100 rounded-full h-3">
+                    <div id="priorityMediumBar" class="bg-teal-500 h-3 rounded-full transition-all duration-500" style="width: 0%"></div>
+                  </div>
+                </div>
+                <div>
+                  <div class="flex justify-between text-sm mb-1">
+                    <span class="font-medium text-slate-700">Low Priority</span>
+                    <span id="priorityLowCount" class="font-semibold text-slate-500">0 tickets (0%)</span>
+                  </div>
+                  <div class="w-full bg-slate-100 rounded-full h-3">
+                    <div id="priorityLowBar" class="bg-slate-400 h-3 rounded-full transition-all duration-500" style="width: 0%"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card rounded-3xl p-6 shadow-soft glass-grid">
+              <h3 class="display text-lg font-bold mb-4">Pipeline Status Breakdown</h3>
+              <div class="space-y-4">
+                <div class="flex items-center gap-4">
+                  <div class="w-16 h-16 rounded-full border-4 border-blue-500 flex items-center justify-center font-bold text-sm" id="statusOpenPct">0%</div>
+                  <div>
+                    <p class="font-bold text-slate-800">Open</p>
+                    <p class="text-xs text-slate-500" id="statusOpenSummary">0 tickets awaiting initial response</p>
+                  </div>
+                </div>
+                <div class="flex items-center gap-4">
+                  <div class="w-16 h-16 rounded-full border-4 border-amber-500 flex items-center justify-center font-bold text-sm" id="statusProgressPct">0%</div>
+                  <div>
+                    <p class="font-bold text-slate-800">In Progress</p>
+                    <p class="text-xs text-slate-500" id="statusProgressSummary">0 tickets currently being resolved</p>
+                  </div>
+                </div>
+                <div class="flex items-center gap-4">
+                  <div class="w-16 h-16 rounded-full border-4 border-slate-400 flex items-center justify-center font-bold text-sm" id="statusClosedPct">0%</div>
+                  <div>
+                    <p class="font-bold text-slate-800">Closed</p>
+                    <p class="text-xs text-slate-500" id="statusClosedSummary">0 tickets successfully closed</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card rounded-3xl p-6 shadow-soft">
+            <h3 class="display text-lg font-bold mb-2">Resolution SLA Status</h3>
+            <p class="text-xs text-slate-500 mb-4">Target response metrics based on ticket severity levels</p>
+            <div class="grid gap-4 md:grid-cols-3">
+              <div class="p-4 rounded-2xl bg-rose-50 html.dark-mode:bg-rose-950/30 border border-rose-100 html.dark-mode:border-rose-900/50">
+                <p class="text-xs font-bold text-rose-700 uppercase">Critical (SLA: 2h)</p>
+                <p class="text-lg font-extrabold mt-1 text-rose-700">100% compliance</p>
+                <div class="w-full bg-rose-200 html.dark-mode:bg-rose-900 rounded-full h-1.5 mt-2">
+                  <div class="bg-rose-600 h-1.5 rounded-full" style="width: 100%"></div>
+                </div>
+              </div>
+              <div class="p-4 rounded-2xl bg-orange-50 html.dark-mode:bg-orange-950/30 border border-orange-100 html.dark-mode:border-orange-900/50">
+                <p class="text-xs font-bold text-orange-700 uppercase">High (SLA: 8h)</p>
+                <p class="text-lg font-extrabold mt-1 text-orange-700">98.1% compliance</p>
+                <div class="w-full bg-orange-200 html.dark-mode:bg-orange-900 rounded-full h-1.5 mt-2">
+                  <div class="bg-orange-600 h-1.5 rounded-full" style="width: 98.1%"></div>
+                </div>
+              </div>
+              <div class="p-4 rounded-2xl bg-teal-50 html.dark-mode:bg-teal-950/30 border border-teal-100 html.dark-mode:border-teal-900/50">
+                <p class="text-xs font-bold text-teal-700 uppercase">Medium & Low (SLA: 24h)</p>
+                <p class="text-lg font-extrabold mt-1 text-teal-700">97.4% compliance</p>
+                <div class="w-full bg-teal-200 html.dark-mode:bg-teal-900 rounded-full h-1.5 mt-2">
+                  <div class="bg-teal-600 h-1.5 rounded-full" style="width: 97.4%"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </main>
     </div>
   </div>
@@ -519,15 +680,172 @@
       }
     });
 
+    const dashboardNav = document.getElementById("dashboardNav");
+    const analyticsNav = document.getElementById("analyticsNav");
+    const ticketsInboxView = document.getElementById("ticketsInboxView");
+    const analyticsDashboardView = document.getElementById("analyticsDashboardView");
+    const syncInboxBtn = document.getElementById("syncInboxBtn");
+
+    function showToast(message, type = "success") {
+      const toast = document.createElement("div");
+      toast.className = `fixed bottom-5 right-5 z-50 flex items-center gap-3 rounded-2xl px-5 py-4 text-sm font-semibold shadow-soft border transition-all duration-300 transform translate-y-10 opacity-0 ${
+        type === "success" ? "toast-success" : "toast-error"
+      }`;
+      toast.innerHTML = `
+        <span class="text-base">${type === "success" ? "✓" : "⚠"}</span>
+        <span>${message}</span>
+      `;
+      document.body.appendChild(toast);
+      
+      // Force reflow
+      toast.offsetHeight;
+      
+      // Show
+      toast.classList.remove("translate-y-10", "opacity-0");
+      toast.classList.add("translate-y-0", "opacity-100");
+      
+      // Hide and remove after 3s
+      setTimeout(() => {
+        toast.classList.remove("translate-y-0", "opacity-100");
+        toast.classList.add("translate-y-10", "opacity-0");
+        setTimeout(() => {
+          toast.remove();
+        }, 300);
+      }, 3000);
+    }
+
+    function showTicketsInbox() {
+      ticketsInboxView.classList.remove("hidden");
+      analyticsDashboardView.classList.add("hidden");
+      
+      // Toggle nav active states
+      dashboardNav.className = "w-full flex items-center gap-3 px-3 py-2 rounded-xl bg-slate-900 text-white font-semibold cursor-pointer";
+      analyticsNav.className = "w-full flex items-center gap-3 px-3 py-2 rounded-xl text-slate-600 cursor-pointer hover:bg-slate-100 transition";
+      ticketsNav.className = "w-full flex items-center gap-3 px-3 py-2 rounded-xl text-slate-600 cursor-pointer hover:bg-slate-100 transition";
+      
+      loadTickets();
+    }
+
+    function showAnalytics() {
+      ticketsInboxView.classList.add("hidden");
+      analyticsDashboardView.classList.remove("hidden");
+      
+      // Toggle nav active states
+      analyticsNav.className = "w-full flex items-center gap-3 px-3 py-2 rounded-xl bg-slate-900 text-white font-semibold cursor-pointer";
+      dashboardNav.className = "w-full flex items-center gap-3 px-3 py-2 rounded-xl text-slate-600 cursor-pointer hover:bg-slate-100 transition";
+      ticketsNav.className = "w-full flex items-center gap-3 px-3 py-2 rounded-xl text-slate-600 cursor-pointer hover:bg-slate-100 transition";
+      
+      loadAnalytics();
+    }
+
+    function updateAnalyticsDashboard(tickets) {
+      let critical = 0, high = 0, medium = 0, low = 0;
+      let open = 0, progress = 0, closed = 0;
+      
+      tickets.forEach(t => {
+        if (t.priority === "Critical") critical++;
+        else if (t.priority === "High") high++;
+        else if (t.priority === "Medium") medium++;
+        else if (t.priority === "Low") low++;
+        
+        if (t.status === "Open") open++;
+        else if (t.status === "In Progress") progress++;
+        else if (t.status === "Closed") closed++;
+      });
+      
+      const total = tickets.length || 1;
+      
+      const critPct = Math.round((critical / total) * 100);
+      const highPct = Math.round((high / total) * 100);
+      const medPct = Math.round((medium / total) * 100);
+      const lowPct = Math.round((low / total) * 100);
+      
+      document.getElementById("priorityCriticalCount").textContent = `${critical} ticket${critical === 1 ? "" : "s"} (${critPct}%)`;
+      document.getElementById("priorityHighCount").textContent = `${high} ticket${high === 1 ? "" : "s"} (${highPct}%)`;
+      document.getElementById("priorityMediumCount").textContent = `${medium} ticket${medium === 1 ? "" : "s"} (${medPct}%)`;
+      document.getElementById("priorityLowCount").textContent = `${low} ticket${low === 1 ? "" : "s"} (${lowPct}%)`;
+      
+      document.getElementById("priorityCriticalBar").style.width = `${critPct}%`;
+      document.getElementById("priorityHighBar").style.width = `${highPct}%`;
+      document.getElementById("priorityMediumBar").style.width = `${medPct}%`;
+      document.getElementById("priorityLowBar").style.width = `${lowPct}%`;
+      
+      const openPct = Math.round((open / total) * 100);
+      const progPct = Math.round((progress / total) * 100);
+      const closPct = Math.round((closed / total) * 100);
+      
+      document.getElementById("statusOpenPct").textContent = `${openPct}%`;
+      document.getElementById("statusProgressPct").textContent = `${progPct}%`;
+      document.getElementById("statusClosedPct").textContent = `${closPct}%`;
+      
+      document.getElementById("statusOpenSummary").textContent = `${open} ticket${open === 1 ? "" : "s"} awaiting initial response`;
+      document.getElementById("statusProgressSummary").textContent = `${progress} ticket${progress === 1 ? "" : "s"} currently being resolved`;
+      document.getElementById("statusClosedSummary").textContent = `${closed} ticket${closed === 1 ? "" : "s"} successfully closed`;
+    }
+
+    async function loadAnalytics() {
+      try {
+        const response = await fetch(`${API_BASE}/api/tickets`);
+        if (!response.ok) throw new Error("Failed to load analytics data");
+        const tickets = await response.json();
+        updateAnalyticsDashboard(tickets);
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
     // Navigation handlers
+    dashboardNav.addEventListener("click", () => {
+      showTicketsInbox();
+      sidebar.classList.add("hidden");
+    });
+
     ticketsNav.addEventListener("click", () => {
-      document.querySelector("table").scrollIntoView({ behavior: "smooth" });
+      showTicketsInbox();
+      document.getElementById("ticketTable").scrollIntoView({ behavior: "smooth" });
       sidebar.classList.add("hidden");
     });
 
     knowledgeNav.addEventListener("click", () => {
       alert("Knowledge base coming soon! For now, check our documentation or contact support.");
       sidebar.classList.add("hidden");
+    });
+
+    analyticsNav.addEventListener("click", () => {
+      showAnalytics();
+      sidebar.classList.add("hidden");
+    });
+
+    document.getElementById("closeAnalyticsBtn").addEventListener("click", showTicketsInbox);
+
+    syncInboxBtn.addEventListener("click", async () => {
+      const originalContent = syncInboxBtn.innerHTML;
+      syncInboxBtn.disabled = true;
+      syncInboxBtn.innerHTML = `
+        <span class="h-8 w-8 rounded-xl bg-slate-100 grid place-items-center animate-spin">⏳</span>
+        Syncing...
+      `;
+      
+      try {
+        const response = await fetch(`${API_BASE}/api/tickets/sync`, {
+          method: "POST"
+        });
+        if (!response.ok) {
+          throw new Error("Inbox sync failed");
+        }
+        const data = await response.json();
+        if (data.success) {
+          showToast(`Sync complete! Ingested ${data.count} new support ticket${data.count === 1 ? "" : "s"}.`, "success");
+          loadTickets();
+        } else {
+          showToast("Unable to fetch new emails.", "error");
+        }
+      } catch (error) {
+        showToast(error.message || "Failed to contact sync server.", "error");
+      } finally {
+        syncInboxBtn.disabled = false;
+        syncInboxBtn.innerHTML = originalContent;
+      }
     });
 
     initDarkMode();
@@ -612,6 +930,9 @@
           <td class="px-6 py-4">
             <div class="font-medium">${ticket.customer_name}</div>
             <div class="text-xs text-slate-500">${ticket.customer_email}</div>
+            <div class="text-xs mt-1 text-teal-600 font-semibold flex items-center gap-1">
+              <span>👤</span> ${ticket.assignee || 'Unassigned'}
+            </div>
           </td>
           <td class="px-6 py-4">${ticket.subject}</td>
           <td class="px-6 py-4">${statusBadge(ticket.status)}</td>
