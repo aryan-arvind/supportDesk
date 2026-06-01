@@ -205,15 +205,15 @@
 
     <aside class="grid gap-4">
       <div class="card rounded-3xl p-6 shadow-soft fade-up glass-grid">
-        <p class="text-xs uppercase tracking-[0.2em] text-slate-400">Intake tips</p>
-        <h2 class="display text-lg font-semibold mt-2">Write crisp summaries</h2>
-        <p class="text-sm text-slate-500 mt-2">Short, clear issue titles reduce time to resolution.</p>
+        <p class="text-xs uppercase tracking-[0.2em] text-slate-400">Quick Fill</p>
+        <h2 class="display text-lg font-semibold mt-2">Scenario Templates</h2>
+        <p class="text-xs text-slate-500 mt-2">Select a common scenario template to automatically populate the Subject and Description fields.</p>
         <div class="mt-4 accent-bar"></div>
-        <ul class="mt-5 space-y-2 text-sm text-slate-600">
-          <li>Include the exact error message</li>
-          <li>Add steps to reproduce</li>
-          <li>Confirm the customer environment</li>
-        </ul>
+        <div class="mt-5 space-y-2.5">
+          <button type="button" data-fill="refund" class="fill-btn w-full rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-left text-xs text-slate-600 hover:bg-slate-50 hover:border-teal-500 transition font-semibold">💸 Refund Claim Template</button>
+          <button type="button" data-fill="delivery" class="fill-btn w-full rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-left text-xs text-slate-600 hover:bg-slate-50 hover:border-teal-500 transition font-semibold">📦 Delivery Delay Template</button>
+          <button type="button" data-fill="login" class="fill-btn w-full rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-left text-xs text-slate-600 hover:bg-slate-50 hover:border-teal-500 transition font-semibold">🔑 Login Blocked Template</button>
+        </div>
       </div>
       <div class="card rounded-3xl p-6 shadow-soft fade-up" style="animation-delay: 0.08s;">
         <p class="text-xs uppercase tracking-[0.2em] text-slate-400">Service levels</p>
@@ -344,6 +344,46 @@
       } catch (error) {
         showMessage(error.message || "Unable to create ticket. Please try again.", "error");
       }
+    });
+
+    // Scenario templates quick-fill logic
+    const fillTemplates = {
+      refund: {
+        subject: "Refund Claim: Order Double Charge",
+        priority: "High",
+        description: "Dear Support,\n\nI am writing to report that my credit card statement shows a double charge of $49.00 for my subscription renewal under Invoice #INV-4029. Please review this transaction and issue a refund for the duplicate charge as soon as possible.\n\nBest regards."
+      },
+      delivery: {
+        subject: "Delivery Status Query: Order #89321 Delayed",
+        priority: "Medium",
+        description: "Hello Team,\n\nMy order #89321 was scheduled to arrive three days ago but the tracking link hasn't updated. Could you please check on the shipping status of this package?\n\nThank you."
+      },
+      login: {
+        subject: "System Access: Login Screen Redirect Loop",
+        priority: "Critical",
+        description: "Hello Support,\n\nI am unable to login to the client panel. Every time I attempt to enter my credentials, the page flashes a white screen and redirects me back to the landing page. Please investigate this authentication loop.\n\nRegards."
+      }
+    };
+
+    document.querySelectorAll(".fill-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const type = btn.dataset.fill;
+        const data = fillTemplates[type];
+        if (data) {
+          document.getElementById("subject").value = data.subject;
+          document.getElementById("priority").value = data.priority;
+          document.getElementById("description").value = data.description;
+          
+          setFieldError("subject", false);
+          setFieldError("description", false);
+          
+          showMessage("Scenario template populated. Please enter customer details.", "success");
+          
+          setTimeout(() => {
+            messageBox.classList.add("hidden");
+          }, 3000);
+        }
+      });
     });
   </script>
 </body>
