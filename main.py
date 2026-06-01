@@ -88,6 +88,11 @@ class NoteDetailResponse(BaseModel):
     created_at: str
 
 
+class AuditLogDetailResponse(BaseModel):
+    log_text: str
+    created_at: str
+
+
 class TicketDetailResponse(BaseModel):
     ticket_id: str
     customer_name: str
@@ -100,6 +105,7 @@ class TicketDetailResponse(BaseModel):
     created_at: str
     updated_at: str
     notes: List[NoteDetailResponse]
+    history: List[AuditLogDetailResponse]
 
 
 # Create and return a new SQLite or PostgreSQL connection.
@@ -150,9 +156,20 @@ def initialize_database() -> None:
                 )
                 """
             )
+            cursor.execute(
+                """
+                CREATE TABLE IF NOT EXISTS audit_logs (
+                    id SERIAL PRIMARY KEY,
+                    ticket_id VARCHAR(50) NOT NULL REFERENCES tickets(ticket_id) ON DELETE CASCADE,
+                    log_text TEXT NOT NULL,
+                    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
+                )
+                """
+            )
             cursor.execute("CREATE INDEX IF NOT EXISTS idx_tickets_status ON tickets(status)")
             cursor.execute("CREATE INDEX IF NOT EXISTS idx_tickets_created ON tickets(created_at)")
             cursor.execute("CREATE INDEX IF NOT EXISTS idx_notes_ticket_id ON notes(ticket_id)")
+            cursor.execute("CREATE INDEX IF NOT EXISTS idx_audit_logs_ticket_id ON audit_logs(ticket_id)")
             conn.commit()
             cursor.close()
         else:
@@ -188,9 +205,21 @@ def initialize_database() -> None:
                 )
                 """
             )
+            conn.execute(
+                """
+                CREATE TABLE IF NOT EXISTS audit_logs (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    ticket_id TEXT NOT NULL,
+                    log_text TEXT NOT NULL,
+                    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                    FOREIGN KEY (ticket_id) REFERENCES tickets(ticket_id)
+                )
+                """
+            )
             conn.execute("CREATE INDEX IF NOT EXISTS idx_tickets_status ON tickets(status)")
             conn.execute("CREATE INDEX IF NOT EXISTS idx_tickets_created ON tickets(created_at)")
             conn.execute("CREATE INDEX IF NOT EXISTS idx_notes_ticket_id ON notes(ticket_id)")
+            conn.execute("CREATE INDEX IF NOT EXISTS idx_audit_logs_ticket_id ON audit_logs(ticket_id)")
             conn.commit()
         
         # Run column migration check to add 'assignee' if table already exists
@@ -240,6 +269,21 @@ def db_execute_one(conn, query: str, params: tuple = ()) -> Optional[dict]:
     return rows[0] if rows else None
 
 
+def add_audit_log(conn, ticket_id: str, log_text: str):
+    if IS_POSTGRES:
+        cursor = conn.cursor()
+        cursor.execute(
+            "INSERT INTO audit_logs (ticket_id, log_text) VALUES (%s, %s)",
+            (ticket_id, log_text),
+        )
+        cursor.close()
+    else:
+        conn.execute(
+            "INSERT INTO audit_logs (ticket_id, log_text) VALUES (?, ?)",
+            (ticket_id, log_text),
+        )
+
+
 
 
 
@@ -280,6 +324,7 @@ def create_ticket(payload: TicketCreateRequest) -> TicketCreateResponse:
                 (ticket_id, ticket_db_id),
             )
             cursor.close()
+            add_audit_log(conn, ticket_id, "Ticket created by customer.")
         else:
             conn.execute("BEGIN IMMEDIATE")
             cursor = conn.execute(
@@ -311,6 +356,7 @@ def create_ticket(payload: TicketCreateRequest) -> TicketCreateResponse:
                 "UPDATE tickets SET ticket_id = ? WHERE id = ?",
                 (ticket_id, ticket_db_id),
             )
+            add_audit_log(conn, ticket_id, "Ticket created by customer.")
         
         conn.commit()
         row = db_execute_one(
@@ -580,7 +626,8 @@ def sync_emails() -> dict:
                     "UPDATE tickets SET ticket_id = ? WHERE id = ?",
                     (ticket_id, ticket_db_id),
                 )
-
+                
+            add_audit_log(conn, ticket_id, "Ticket created via email ingestion.")
             new_tickets_count += 1
             synced_tickets.append(ticket_id)
 
@@ -623,6 +670,21 @@ def get_ticket_details(ticket_id: str) -> TicketDetailResponse:
             )
             for row in note_rows
         ]
+
+        history_rows = db_execute(
+            conn,
+            "SELECT * FROM audit_logs WHERE ticket_id = ? ORDER BY created_at DESC",
+            (ticket_id,),
+        )
+
+        history = [
+            AuditLogDetailResponse(
+                log_text=row["log_text"],
+                created_at=str(row["created_at"])
+            )
+            for row in history_rows
+        ]
+
         return TicketDetailResponse(
             ticket_id=ticket_row["ticket_id"],
             customer_name=ticket_row["customer_name"],
@@ -634,7 +696,8 @@ def get_ticket_details(ticket_id: str) -> TicketDetailResponse:
             assignee=ticket_row.get("assignee", "Unassigned"),
             created_at=str(ticket_row["created_at"]),
             updated_at=str(ticket_row["updated_at"]),
-            notes=notes
+            notes=notes,
+            history=history
         )
     finally:
         conn.close()
@@ -665,26 +728,29 @@ def update_ticket(ticket_id: str, payload: TicketUpdateRequest) -> dict:
         if not ticket_row:
             raise HTTPException(status_code=404, detail="Ticket not found")
 
-        if payload.status is not None:
+        if payload.status is not None and payload.status != ticket_row.get("status"):
             db_execute(
                 conn,
                 "UPDATE tickets SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE ticket_id = ?",
                 (payload.status, ticket_id),
             )
+            add_audit_log(conn, ticket_id, f"Status updated from '{ticket_row.get('status')}' to '{payload.status}'.")
 
-        if payload.priority is not None:
+        if payload.priority is not None and payload.priority != ticket_row.get("priority"):
             db_execute(
                 conn,
                 "UPDATE tickets SET priority = ?, updated_at = CURRENT_TIMESTAMP WHERE ticket_id = ?",
                 (payload.priority, ticket_id),
             )
+            add_audit_log(conn, ticket_id, f"Priority updated from '{ticket_row.get('priority')}' to '{payload.priority}'.")
 
-        if payload.assignee is not None:
+        if payload.assignee is not None and payload.assignee != ticket_row.get("assignee", "Unassigned"):
             db_execute(
                 conn,
                 "UPDATE tickets SET assignee = ?, updated_at = CURRENT_TIMESTAMP WHERE ticket_id = ?",
                 (payload.assignee, ticket_id),
             )
+            add_audit_log(conn, ticket_id, f"Assignee updated from '{ticket_row.get('assignee', 'Unassigned')}' to '{payload.assignee}'.")
 
         if note_content is not None:
             if IS_POSTGRES:
@@ -707,6 +773,7 @@ def update_ticket(ticket_id: str, payload: TicketUpdateRequest) -> dict:
                     "UPDATE tickets SET updated_at = CURRENT_TIMESTAMP WHERE ticket_id = ?",
                     (ticket_id,),
                 )
+            add_audit_log(conn, ticket_id, f"Note added: \"{note_content[:40]}...\"" if len(note_content) > 40 else f"Note added: \"{note_content}\"")
 
         conn.commit()
         updated_row = db_execute_one(

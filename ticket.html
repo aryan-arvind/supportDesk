@@ -144,6 +144,15 @@
         radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.08), transparent 35%),
         radial-gradient(circle at 80% 0%, rgba(16, 185, 129, 0.12), transparent 40%);
     }
+    .info-tile {
+      background-color: #f8fafc !important;
+      border: 1px solid #e2e8f0 !important;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    }
+    html.dark-mode .info-tile {
+      background-color: #1e293b !important;
+      border-color: #334155 !important;
+    }
   </style>
 </head>
 <body class="min-h-screen">
@@ -185,18 +194,18 @@
       </div>
 
       <div class="mt-6 grid gap-4 md:grid-cols-3">
-        <div class="bg-slate-50 rounded-2xl p-4">
-          <p class="text-xs uppercase tracking-wide text-slate-500">Customer</p>
-          <p id="customerName" class="text-lg font-semibold"></p>
-          <p id="customerEmail" class="text-sm text-slate-500"></p>
+        <div class="info-tile rounded-2xl p-4 transition-all duration-300 hover:scale-[1.02]">
+          <p class="text-xs uppercase tracking-wide text-slate-500 font-semibold mb-1">👤 Customer</p>
+          <p id="customerName" class="text-base font-bold text-slate-800"></p>
+          <p id="customerEmail" class="text-xs text-slate-500"></p>
         </div>
-        <div class="bg-slate-50 rounded-2xl p-4">
-          <p class="text-xs uppercase tracking-wide text-slate-500">Assignee</p>
-          <p id="ticketAssignee" class="text-lg font-semibold text-teal-700"></p>
+        <div class="info-tile rounded-2xl p-4 transition-all duration-300 hover:scale-[1.02]">
+          <p class="text-xs uppercase tracking-wide text-slate-500 font-semibold mb-1">👤 Assignee</p>
+          <p id="ticketAssignee" class="text-base font-bold text-teal-700"></p>
         </div>
-        <div class="bg-slate-50 rounded-2xl p-4">
-          <p class="text-xs uppercase tracking-wide text-slate-500">Created</p>
-          <p id="createdAt" class="text-lg font-semibold"></p>
+        <div class="info-tile rounded-2xl p-4 transition-all duration-300 hover:scale-[1.02]">
+          <p class="text-xs uppercase tracking-wide text-slate-500 font-semibold mb-1">📅 Created</p>
+          <p id="createdAt" class="text-base font-bold text-slate-800"></p>
         </div>
       </div>
 
@@ -255,21 +264,10 @@
 
       <aside class="grid gap-4">
         <div class="card rounded-3xl p-6 shadow-soft fade-up glass-grid" style="animation-delay: 0.08s;">
-          <p class="text-xs uppercase tracking-[0.2em] text-slate-400">Status track</p>
-          <h3 class="display text-base font-semibold mt-2">Resolution path</h3>
-          <div class="mt-4 space-y-3 text-sm text-slate-600">
-            <div class="flex items-center gap-3">
-              <span class="h-2.5 w-2.5 rounded-full bg-emerald-500"></span>
-              <span>Ticket received</span>
-            </div>
-            <div class="flex items-center gap-3">
-              <span class="h-2.5 w-2.5 rounded-full bg-amber-400"></span>
-              <span>Agent reviewing</span>
-            </div>
-            <div class="flex items-center gap-3">
-              <span class="h-2.5 w-2.5 rounded-full bg-slate-400"></span>
-              <span>Resolution shared</span>
-            </div>
+          <p class="text-xs uppercase tracking-[0.2em] text-slate-400">Activity History</p>
+          <h3 class="display text-base font-semibold mt-2">Audit Trail</h3>
+          <div id="historyList" class="mt-4 space-y-3 text-xs text-slate-600 max-h-[250px] overflow-y-auto pr-1">
+            <!-- Dynamic history logs go here -->
           </div>
           <div class="mt-4 accent-bar"></div>
         </div>
@@ -400,6 +398,28 @@
       document.getElementById("assigneeSelect").value = data.assignee || "Unassigned";
       setBadgeStyles(data.status, data.priority);
       renderNotes(data.notes || []);
+      renderHistory(data.history || []);
+    }
+
+    function renderHistory(logs) {
+      const historyList = document.getElementById("historyList");
+      historyList.innerHTML = "";
+      if (!logs.length) {
+        historyList.innerHTML = "<p class='text-slate-500'>No activity logged yet.</p>";
+        return;
+      }
+      logs.forEach(log => {
+        const item = document.createElement("div");
+        item.className = "flex items-start gap-2.5 pb-2 border-b border-slate-100 html.dark-mode:border-slate-800 last:border-0";
+        item.innerHTML = `
+          <span class="h-2 w-2 mt-1 rounded-full bg-teal-500 flex-shrink-0"></span>
+          <div class="flex-1">
+            <p class="font-medium text-slate-700 leading-tight">${log.log_text}</p>
+            <p class="text-[10px] text-slate-400 mt-0.5">${formatDate(log.created_at)}</p>
+          </div>
+        `;
+        historyList.appendChild(item);
+      });
 
       ticketCard.classList.remove("hidden");
       actionsCard.classList.remove("hidden");
