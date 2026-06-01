@@ -35,7 +35,7 @@
       background: rgba(30, 41, 59, 0.85);
     }
     html.dark-mode header {
-      background: #1e293b/80 !important;
+      background: rgba(30, 41, 59, 0.8) !important;
       border-color: rgba(71, 85, 105, 0.3);
     }
     html.dark-mode .bg-white {
@@ -160,7 +160,8 @@
     </section>
 
     <section id="actionsCard" class="hidden card glass rounded-3xl p-6 fade-up" style="animation-delay: 0.05s;">
-      <div class="grid gap-4 md:grid-cols-[2fr_1fr] items-end">
+      <h2 class="display text-lg font-semibold mb-4">Manage Ticket</h2>
+      <div class="grid gap-4 sm:grid-cols-2 md:grid-cols-3 items-end">
         <div>
           <label class="text-sm font-semibold text-slate-700" for="statusSelect">Update Status</label>
           <select id="statusSelect" class="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 focus:outline-none focus:ring-2 focus:ring-teal-500">
@@ -169,9 +170,18 @@
             <option value="Closed">Closed</option>
           </select>
         </div>
-        <button id="saveStatus" class="rounded-full bg-gradient-to-r from-teal-700 to-emerald-600 px-5 py-3 text-white text-sm font-semibold shadow-sm hover:shadow-md transition">Save Status</button>
+        <div>
+          <label class="text-sm font-semibold text-slate-700" for="prioritySelect">Update Priority</label>
+          <select id="prioritySelect" class="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 focus:outline-none focus:ring-2 focus:ring-teal-500">
+            <option value="Low">Low</option>
+            <option value="Medium">Medium</option>
+            <option value="High">High</option>
+            <option value="Critical">Critical</option>
+          </select>
+        </div>
+        <button id="saveActions" class="rounded-full bg-gradient-to-r from-teal-700 to-emerald-600 px-5 py-3 text-white text-sm font-semibold shadow-sm hover:shadow-md transition">Save Updates</button>
       </div>
-      <p id="statusMessage" class="mt-3 text-sm"></p>
+      <p id="actionsMessage" class="mt-3 text-sm"></p>
     </section>
 
     <section id="notesCard" class="hidden card glass rounded-3xl p-6 fade-up" style="animation-delay: 0.1s;">
@@ -261,8 +271,9 @@
     const statusBadge = document.getElementById("statusBadge");
     const priorityBadge = document.getElementById("priorityBadge");
     const statusSelect = document.getElementById("statusSelect");
-    const saveStatus = document.getElementById("saveStatus");
-    const statusMessage = document.getElementById("statusMessage");
+    const prioritySelect = document.getElementById("prioritySelect");
+    const saveActions = document.getElementById("saveActions");
+    const actionsMessage = document.getElementById("actionsMessage");
 
     const notesList = document.getElementById("notesList");
     const noteInput = document.getElementById("noteInput");
@@ -318,6 +329,7 @@
       createdAt.textContent = formatDate(data.created_at);
       ticketDescription.textContent = data.description;
       statusSelect.value = data.status;
+      prioritySelect.value = data.priority;
       setBadgeStyles(data.status, data.priority);
       renderNotes(data.notes || []);
 
@@ -349,11 +361,14 @@
       }
     }
 
-    saveStatus.addEventListener("click", async () => {
-      statusMessage.textContent = "";
-      const payload = { status: statusSelect.value };
+    saveActions.addEventListener("click", async () => {
+      actionsMessage.textContent = "";
+      const payload = {
+        status: statusSelect.value,
+        priority: prioritySelect.value
+      };
 
-      // Update the ticket status with the selected value.
+      // Update the ticket status and priority.
       try {
         const response = await fetch(`${API_BASE}/api/tickets/${encodeURIComponent(ticketIdParam)}`, {
           method: "PUT",
@@ -363,14 +378,19 @@
           body: JSON.stringify(payload),
         });
         if (!response.ok) {
+          if (response.status === 422) {
+            const errData = await response.json();
+            const errors = errData.detail.map(err => err.msg).join(', ');
+            throw new Error(`Validation error: ${errors}`);
+          }
           throw new Error("Failed to update status");
         }
-        statusMessage.textContent = "Status updated.";
-        statusMessage.className = "mt-3 text-sm text-emerald-700";
+        actionsMessage.textContent = "Ticket details updated.";
+        actionsMessage.className = "mt-3 text-sm text-emerald-700";
         await loadTicket();
       } catch (error) {
-        statusMessage.textContent = "Unable to update status.";
-        statusMessage.className = "mt-3 text-sm text-rose-700";
+        actionsMessage.textContent = error.message || "Unable to update ticket details.";
+        actionsMessage.className = "mt-3 text-sm text-rose-700";
       }
     });
 
@@ -393,6 +413,11 @@
           body: JSON.stringify({ note_text: noteText }),
         });
         if (!response.ok) {
+          if (response.status === 422) {
+            const errData = await response.json();
+            const errors = errData.detail.map(err => err.msg).join(', ');
+            throw new Error(`Validation error: ${errors}`);
+          }
           throw new Error("Failed to add note");
         }
         noteInput.value = "";
@@ -400,7 +425,7 @@
         noteMessage.className = "mt-2 text-sm text-emerald-700";
         await loadTicket();
       } catch (error) {
-        noteMessage.textContent = "Unable to add note.";
+        noteMessage.textContent = error.message || "Unable to add note.";
         noteMessage.className = "mt-2 text-sm text-rose-700";
       }
     });

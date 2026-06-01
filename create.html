@@ -35,7 +35,7 @@
       background: rgba(30, 41, 59, 0.85);
     }
     html.dark-mode header {
-      background: #1e293b/80 !important;
+      background: rgba(30, 41, 59, 0.8) !important;
       border-color: rgba(71, 85, 105, 0.3);
     }
     html.dark-mode .bg-white {
@@ -148,6 +148,15 @@
           <p class="text-xs text-red-600 mt-1 hidden" data-error-for="subject">Subject is required.</p>
         </div>
         <div>
+          <label class="text-sm font-semibold text-slate-700" for="priority">Priority</label>
+          <select id="priority" class="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 focus:outline-none focus:ring-2 focus:ring-teal-500">
+            <option value="Low">Low</option>
+            <option value="Medium" selected>Medium</option>
+            <option value="High">High</option>
+            <option value="Critical">Critical</option>
+          </select>
+        </div>
+        <div>
           <label class="text-sm font-semibold text-slate-700" for="description">Description</label>
           <textarea id="description" rows="5" class="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 focus:outline-none focus:ring-2 focus:ring-teal-500" required></textarea>
           <p class="text-xs text-red-600 mt-1 hidden" data-error-for="description">Description is required.</p>
@@ -254,6 +263,7 @@
         customer_name: document.getElementById("customerName").value.trim(),
         customer_email: document.getElementById("customerEmail").value.trim(),
         subject: document.getElementById("subject").value.trim(),
+        priority: document.getElementById("priority").value,
         description: document.getElementById("description").value.trim(),
       };
 
@@ -277,6 +287,14 @@
         });
 
         if (!response.ok) {
+          if (response.status === 422) {
+            const errData = await response.json();
+            const errors = errData.detail.map(err => {
+              const field = err.loc[err.loc.length - 1];
+              return `${field.replace('_', ' ')}: ${err.msg}`;
+            }).join(', ');
+            throw new Error(`Validation Error - ${errors}`);
+          }
           throw new Error("Failed to create ticket");
         }
 
@@ -286,7 +304,7 @@
           window.location.href = "index.html";
         }, 2000);
       } catch (error) {
-        showMessage("Unable to create ticket. Please try again.", "error");
+        showMessage(error.message || "Unable to create ticket. Please try again.", "error");
       }
     });
   </script>

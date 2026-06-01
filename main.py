@@ -9,6 +9,7 @@ from pydantic import BaseModel, EmailStr, Field
 
 DB_PATH = "tickets.db"
 ALLOWED_STATUSES = {"Open", "In Progress", "Closed"}
+ALLOWED_PRIORITIES = {"Low", "Medium", "High", "Critical"}
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 INDEX_PATH = os.path.join(BASE_DIR, "index.html")
 CREATE_PATH = os.path.join(BASE_DIR, "create.html")
@@ -30,15 +31,36 @@ class TicketCreateRequest(BaseModel):
     customer_email: EmailStr
     subject: str = Field(..., min_length=1)
     description: str = Field(..., min_length=1)
+    priority: Optional[str] = Field("Medium", pattern="^(Low|Medium|High|Critical)$")
 
 
 class TicketUpdateRequest(BaseModel):
     status: Optional[str] = None
     note_text: Optional[str] = None
+    notes: Optional[str] = None
+    priority: Optional[str] = None
 
 
-class TicketResponse(BaseModel):
-    id: int
+class TicketCreateResponse(BaseModel):
+    ticket_id: str
+    created_at: str
+
+
+class TicketListResponse(BaseModel):
+    ticket_id: str
+    customer_name: str
+    subject: str
+    status: str
+    priority: str
+    created_at: str
+
+
+class NoteDetailResponse(BaseModel):
+    note_text: str
+    created_at: str
+
+
+class TicketDetailResponse(BaseModel):
     ticket_id: str
     customer_name: str
     customer_email: str
@@ -48,17 +70,7 @@ class TicketResponse(BaseModel):
     priority: str
     created_at: str
     updated_at: str
-
-
-class NoteResponse(BaseModel):
-    id: int
-    ticket_id: str
-    note_text: str
-    created_at: str
-
-
-class TicketWithNotesResponse(TicketResponse):
-    notes: List[NoteResponse]
+    notes: List[NoteDetailResponse]
 
 
 # Create and return a new SQLite connection.
@@ -118,35 +130,12 @@ def format_ticket_id(ticket_db_id: int) -> str:
     return f"TKT-{ticket_db_id:03d}"
 
 
-# Convert a ticket row into a response model.
-def map_ticket_row(row: sqlite3.Row) -> TicketResponse:
-    return TicketResponse(
-        id=row["id"],
-        ticket_id=row["ticket_id"],
-        customer_name=row["customer_name"],
-        customer_email=row["customer_email"],
-        subject=row["subject"],
-        description=row["description"],
-        status=row["status"],
-        priority=row["priority"],
-        created_at=row["created_at"],
-        updated_at=row["updated_at"],
-    )
 
-
-# Convert a note row into a response model.
-def map_note_row(row: sqlite3.Row) -> NoteResponse:
-    return NoteResponse(
-        id=row["id"],
-        ticket_id=row["ticket_id"],
-        note_text=row["note_text"],
-        created_at=row["created_at"],
-    )
 
 
 # Create a new ticket and return it.
-@app.post("/api/tickets", response_model=TicketResponse, status_code=201)
-def create_ticket(payload: TicketCreateRequest) -> TicketResponse:
+@app.post("/api/tickets", response_model=TicketCreateResponse, status_code=201)
+def create_ticket(payload: TicketCreateRequest) -> TicketCreateResponse:
     conn = get_db_connection()
     try:
         conn.execute("BEGIN IMMEDIATE")
@@ -162,7 +151,7 @@ def create_ticket(payload: TicketCreateRequest) -> TicketResponse:
                 priority,
                 created_at,
                 updated_at
-            ) VALUES (?, ?, ?, ?, ?, 'Open', 'Medium', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+            ) VALUES (?, ?, ?, ?, ?, 'Open', ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
             """,
             (
                 None,
@@ -170,6 +159,7 @@ def create_ticket(payload: TicketCreateRequest) -> TicketResponse:
                 payload.customer_email,
                 payload.subject,
                 payload.description,
+                payload.priority or "Medium",
             ),
         )
         ticket_db_id = cursor.lastrowid
@@ -180,21 +170,31 @@ def create_ticket(payload: TicketCreateRequest) -> TicketResponse:
         )
         conn.commit()
         row = conn.execute(
-            "SELECT * FROM tickets WHERE id = ?",
+            "SELECT ticket_id, created_at FROM tickets WHERE id = ?",
             (ticket_db_id,),
         ).fetchone()
-        return map_ticket_row(row)
+        return TicketCreateResponse(
+            ticket_id=row["ticket_id"],
+            created_at=row["created_at"]
+        )
     finally:
         conn.close()
 
 
-# Return all tickets, optionally filtered by status and search text.
-@app.get("/api/tickets", response_model=List[TicketResponse])
-def list_tickets(status: Optional[str] = None, search: Optional[str] = None) -> List[TicketResponse]:
+# Return all tickets, optionally filtered by status, priority, and search text.
+@app.get("/api/tickets", response_model=List[TicketListResponse])
+def list_tickets(
+    status: Optional[str] = None,
+    priority: Optional[str] = None,
+    search: Optional[str] = None
+) -> List[TicketListResponse]:
     conn = get_db_connection()
     try:
         if status and status not in ALLOWED_STATUSES:
             raise HTTPException(status_code=400, detail="Invalid status filter")
+
+        if priority and priority not in ALLOWED_PRIORITIES:
+            raise HTTPException(status_code=400, detail="Invalid priority filter")
 
         query = "SELECT * FROM tickets"
         conditions = []
@@ -203,6 +203,10 @@ def list_tickets(status: Optional[str] = None, search: Optional[str] = None) -> 
         if status:
             conditions.append("status = ?")
             params.append(status)
+
+        if priority:
+            conditions.append("priority = ?")
+            params.append(priority)
 
         if search:
             like = f"%{search}%"
@@ -216,7 +220,17 @@ def list_tickets(status: Optional[str] = None, search: Optional[str] = None) -> 
 
         query += " ORDER BY created_at DESC"
         rows = conn.execute(query, params).fetchall()
-        return [map_ticket_row(row) for row in rows]
+        return [
+            TicketListResponse(
+                ticket_id=row["ticket_id"],
+                customer_name=row["customer_name"],
+                subject=row["subject"],
+                status=row["status"],
+                priority=row["priority"],
+                created_at=row["created_at"]
+            )
+            for row in rows
+        ]
     finally:
         conn.close()
 
@@ -252,8 +266,8 @@ def healthcheck() -> dict:
 
 
 # Return a ticket and its notes by ticket_id.
-@app.get("/api/tickets/{ticket_id}", response_model=TicketWithNotesResponse)
-def get_ticket_details(ticket_id: str) -> TicketWithNotesResponse:
+@app.get("/api/tickets/{ticket_id}", response_model=TicketDetailResponse)
+def get_ticket_details(ticket_id: str) -> TicketDetailResponse:
     conn = get_db_connection()
     try:
         ticket_row = conn.execute(
@@ -269,21 +283,42 @@ def get_ticket_details(ticket_id: str) -> TicketWithNotesResponse:
             (ticket_id,),
         ).fetchall()
 
-        ticket = map_ticket_row(ticket_row)
-        notes = [map_note_row(row) for row in note_rows]
-        return TicketWithNotesResponse(**ticket.model_dump(), notes=notes)
+        notes = [
+            NoteDetailResponse(
+                note_text=row["note_text"],
+                created_at=row["created_at"]
+            )
+            for row in note_rows
+        ]
+        return TicketDetailResponse(
+            ticket_id=ticket_row["ticket_id"],
+            customer_name=ticket_row["customer_name"],
+            customer_email=ticket_row["customer_email"],
+            subject=ticket_row["subject"],
+            description=ticket_row["description"],
+            status=ticket_row["status"],
+            priority=ticket_row["priority"],
+            created_at=ticket_row["created_at"],
+            updated_at=ticket_row["updated_at"],
+            notes=notes
+        )
     finally:
         conn.close()
 
 
-# Update a ticket status and/or add a note.
+# Update a ticket status, priority, and/or add a note.
 @app.put("/api/tickets/{ticket_id}")
 def update_ticket(ticket_id: str, payload: TicketUpdateRequest) -> dict:
-    if payload.status is None and payload.note_text is None:
-        raise HTTPException(status_code=400, detail="status or note_text is required")
+    note_content = payload.note_text if payload.note_text is not None else payload.notes
+
+    if payload.status is None and payload.priority is None and note_content is None:
+        raise HTTPException(status_code=400, detail="At least one update field (status, priority, or notes) is required")
 
     if payload.status is not None and payload.status not in ALLOWED_STATUSES:
         raise HTTPException(status_code=400, detail="Invalid status value")
+
+    if payload.priority is not None and payload.priority not in ALLOWED_PRIORITIES:
+        raise HTTPException(status_code=400, detail="Invalid priority value")
 
     conn = get_db_connection()
     try:
@@ -301,10 +336,16 @@ def update_ticket(ticket_id: str, payload: TicketUpdateRequest) -> dict:
                 (payload.status, ticket_id),
             )
 
-        if payload.note_text is not None:
+        if payload.priority is not None:
+            conn.execute(
+                "UPDATE tickets SET priority = ?, updated_at = CURRENT_TIMESTAMP WHERE ticket_id = ?",
+                (payload.priority, ticket_id),
+            )
+
+        if note_content is not None:
             conn.execute(
                 "INSERT INTO notes (ticket_id, note_text, created_at) VALUES (?, ?, CURRENT_TIMESTAMP)",
-                (ticket_id, payload.note_text),
+                (ticket_id, note_content),
             )
             conn.execute(
                 "UPDATE tickets SET updated_at = CURRENT_TIMESTAMP WHERE ticket_id = ?",
