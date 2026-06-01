@@ -1,11 +1,24 @@
 import os
 import sqlite3
-from typing import List, Optional
+from typing import List, Optional, Any, Union
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from pydantic import BaseModel, EmailStr, Field
+
+try:
+    import psycopg2
+    import psycopg2.extras
+    PSYCOPG2_AVAILABLE = True
+except ImportError:
+    PSYCOPG2_AVAILABLE = False
+
+DATABASE_URL = os.getenv("DATABASE_URL")
+if DATABASE_URL and DATABASE_URL.startswith("postgres://"):
+    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
+
+IS_POSTGRES = DATABASE_URL is not None and PSYCOPG2_AVAILABLE
 
 DB_PATH = "tickets.db"
 ALLOWED_STATUSES = {"Open", "In Progress", "Closed"}
@@ -74,12 +87,16 @@ class TicketDetailResponse(BaseModel):
     notes: List[NoteDetailResponse]
 
 
-# Create and return a new SQLite connection.
-def get_db_connection() -> sqlite3.Connection:
-    conn = sqlite3.connect(DB_PATH, timeout=30)
-    conn.row_factory = sqlite3.Row
-    conn.execute("PRAGMA foreign_keys = ON")
-    return conn
+# Create and return a new SQLite or PostgreSQL connection.
+def get_db_connection() -> Any:
+    if IS_POSTGRES:
+        conn = psycopg2.connect(DATABASE_URL)
+        return conn
+    else:
+        conn = sqlite3.connect(DB_PATH, timeout=30)
+        conn.row_factory = sqlite3.Row
+        conn.execute("PRAGMA foreign_keys = ON")
+        return conn
 
 
 # Initialize the database schema if tables do not exist.
@@ -87,41 +104,77 @@ def get_db_connection() -> sqlite3.Connection:
 def initialize_database() -> None:
     conn = get_db_connection()
     try:
-        conn.execute("PRAGMA journal_mode = WAL")
-        conn.execute("PRAGMA synchronous = NORMAL")
-        conn.execute(
-            """
-            CREATE TABLE IF NOT EXISTS tickets (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                ticket_id TEXT UNIQUE,
-                customer_name TEXT NOT NULL,
-                customer_email TEXT NOT NULL,
-                subject TEXT NOT NULL,
-                description TEXT NOT NULL,
-                status TEXT NOT NULL DEFAULT 'Open',
-                priority TEXT NOT NULL DEFAULT 'Medium',
-                created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                CHECK (status IN ('Open', 'In Progress', 'Closed')),
-                CHECK (priority IN ('Low', 'Medium', 'High', 'Critical'))
+        if IS_POSTGRES:
+            cursor = conn.cursor()
+            cursor.execute(
+                """
+                CREATE TABLE IF NOT EXISTS tickets (
+                    id SERIAL PRIMARY KEY,
+                    ticket_id VARCHAR(50) UNIQUE,
+                    customer_name VARCHAR(255) NOT NULL,
+                    customer_email VARCHAR(255) NOT NULL,
+                    subject VARCHAR(255) NOT NULL,
+                    description TEXT NOT NULL,
+                    status VARCHAR(50) NOT NULL DEFAULT 'Open',
+                    priority VARCHAR(50) NOT NULL DEFAULT 'Medium',
+                    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                    updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                    CHECK (status IN ('Open', 'In Progress', 'Closed')),
+                    CHECK (priority IN ('Low', 'Medium', 'High', 'Critical'))
+                )
+                """
             )
-            """
-        )
-        conn.execute(
-            """
-            CREATE TABLE IF NOT EXISTS notes (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                ticket_id TEXT NOT NULL,
-                note_text TEXT,
-                created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                FOREIGN KEY (ticket_id) REFERENCES tickets(ticket_id)
+            cursor.execute(
+                """
+                CREATE TABLE IF NOT EXISTS notes (
+                    id SERIAL PRIMARY KEY,
+                    ticket_id VARCHAR(50) NOT NULL REFERENCES tickets(ticket_id) ON DELETE CASCADE,
+                    note_text TEXT,
+                    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
+                )
+                """
             )
-            """
-        )
-        conn.execute("CREATE INDEX IF NOT EXISTS idx_tickets_status ON tickets(status)")
-        conn.execute("CREATE INDEX IF NOT EXISTS idx_tickets_created ON tickets(created_at)")
-        conn.execute("CREATE INDEX IF NOT EXISTS idx_notes_ticket_id ON notes(ticket_id)")
-        conn.commit()
+            cursor.execute("CREATE INDEX IF NOT EXISTS idx_tickets_status ON tickets(status)")
+            cursor.execute("CREATE INDEX IF NOT EXISTS idx_tickets_created ON tickets(created_at)")
+            cursor.execute("CREATE INDEX IF NOT EXISTS idx_notes_ticket_id ON notes(ticket_id)")
+            conn.commit()
+            cursor.close()
+        else:
+            conn.execute("PRAGMA journal_mode = WAL")
+            conn.execute("PRAGMA synchronous = NORMAL")
+            conn.execute(
+                """
+                CREATE TABLE IF NOT EXISTS tickets (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    ticket_id TEXT UNIQUE,
+                    customer_name TEXT NOT NULL,
+                    customer_email TEXT NOT NULL,
+                    subject TEXT NOT NULL,
+                    description TEXT NOT NULL,
+                    status TEXT NOT NULL DEFAULT 'Open',
+                    priority TEXT NOT NULL DEFAULT 'Medium',
+                    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                    updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                    CHECK (status IN ('Open', 'In Progress', 'Closed')),
+                    CHECK (priority IN ('Low', 'Medium', 'High', 'Critical'))
+                )
+                """
+            )
+            conn.execute(
+                """
+                CREATE TABLE IF NOT EXISTS notes (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    ticket_id TEXT NOT NULL,
+                    note_text TEXT,
+                    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                    FOREIGN KEY (ticket_id) REFERENCES tickets(ticket_id)
+                )
+                """
+            )
+            conn.execute("CREATE INDEX IF NOT EXISTS idx_tickets_status ON tickets(status)")
+            conn.execute("CREATE INDEX IF NOT EXISTS idx_tickets_created ON tickets(created_at)")
+            conn.execute("CREATE INDEX IF NOT EXISTS idx_notes_ticket_id ON notes(ticket_id)")
+            conn.commit()
     finally:
         conn.close()
 
@@ -129,6 +182,32 @@ def initialize_database() -> None:
 # Format a numeric ticket row id into the ticket_id format.
 def format_ticket_id(ticket_db_id: int) -> str:
     return f"TKT-{ticket_db_id:03d}"
+
+
+# Execute queries dynamically mapping '?' placeholders to '%s' for Postgres
+def db_execute(conn, query: str, params: tuple = ()) -> List[dict]:
+    if not isinstance(params, (tuple, list)):
+        params = (params,)
+    if IS_POSTGRES:
+        postgres_query = query.replace("?", "%s")
+        cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+        try:
+            cursor.execute(postgres_query, params)
+            if cursor.description:
+                rows = cursor.fetchall()
+                return [dict(row) for row in rows]
+            return []
+        finally:
+            cursor.close()
+    else:
+        cursor = conn.execute(query, params)
+        rows = cursor.fetchall()
+        return [dict(row) for row in rows]
+
+
+def db_execute_one(conn, query: str, params: tuple = ()) -> Optional[dict]:
+    rows = db_execute(conn, query, params)
+    return rows[0] if rows else None
 
 
 
@@ -139,44 +218,79 @@ def format_ticket_id(ticket_db_id: int) -> str:
 def create_ticket(payload: TicketCreateRequest) -> TicketCreateResponse:
     conn = get_db_connection()
     try:
-        conn.execute("BEGIN IMMEDIATE")
-        cursor = conn.execute(
-            """
-            INSERT INTO tickets (
-                ticket_id,
-                customer_name,
-                customer_email,
-                subject,
-                description,
-                status,
-                priority,
-                created_at,
-                updated_at
-            ) VALUES (?, ?, ?, ?, ?, 'Open', ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
-            """,
-            (
-                None,
-                payload.customer_name,
-                payload.customer_email,
-                payload.subject,
-                payload.description,
-                payload.priority or "Medium",
-            ),
-        )
-        ticket_db_id = cursor.lastrowid
-        ticket_id = format_ticket_id(ticket_db_id)
-        conn.execute(
-            "UPDATE tickets SET ticket_id = ? WHERE id = ?",
-            (ticket_id, ticket_db_id),
-        )
+        if IS_POSTGRES:
+            cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+            cursor.execute(
+                """
+                INSERT INTO tickets (
+                    ticket_id,
+                    customer_name,
+                    customer_email,
+                    subject,
+                    description,
+                    status,
+                    priority
+                ) VALUES (NULL, %s, %s, %s, %s, 'Open', %s) RETURNING id
+                """,
+                (
+                    payload.customer_name,
+                    payload.customer_email,
+                    payload.subject,
+                    payload.description,
+                    payload.priority or "Medium",
+                ),
+            )
+            ticket_db_id = cursor.fetchone()["id"]
+            cursor.close()
+            
+            ticket_id = format_ticket_id(ticket_db_id)
+            cursor = conn.cursor()
+            cursor.execute(
+                "UPDATE tickets SET ticket_id = %s WHERE id = %s",
+                (ticket_id, ticket_db_id),
+            )
+            cursor.close()
+        else:
+            conn.execute("BEGIN IMMEDIATE")
+            cursor = conn.execute(
+                """
+                INSERT INTO tickets (
+                    ticket_id,
+                    customer_name,
+                    customer_email,
+                    subject,
+                    description,
+                    status,
+                    priority,
+                    created_at,
+                    updated_at
+                ) VALUES (?, ?, ?, ?, ?, 'Open', ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+                """,
+                (
+                    None,
+                    payload.customer_name,
+                    payload.customer_email,
+                    payload.subject,
+                    payload.description,
+                    payload.priority or "Medium",
+                ),
+            )
+            ticket_db_id = cursor.lastrowid
+            ticket_id = format_ticket_id(ticket_db_id)
+            conn.execute(
+                "UPDATE tickets SET ticket_id = ? WHERE id = ?",
+                (ticket_id, ticket_db_id),
+            )
+        
         conn.commit()
-        row = conn.execute(
+        row = db_execute_one(
+            conn,
             "SELECT ticket_id, created_at FROM tickets WHERE id = ?",
             (ticket_db_id,),
-        ).fetchone()
+        )
         return TicketCreateResponse(
             ticket_id=row["ticket_id"],
-            created_at=row["created_at"]
+            created_at=str(row["created_at"])
         )
     finally:
         conn.close()
@@ -199,7 +313,7 @@ def list_tickets(
 
         query = "SELECT * FROM tickets"
         conditions = []
-        params: List[str] = []
+        params = []
 
         if status:
             conditions.append("status = ?")
@@ -220,7 +334,7 @@ def list_tickets(
             query += " WHERE " + " AND ".join(conditions)
 
         query += " ORDER BY created_at DESC"
-        rows = conn.execute(query, params).fetchall()
+        rows = db_execute(conn, query, tuple(params))
         return [
             TicketListResponse(
                 ticket_id=row["ticket_id"],
@@ -229,7 +343,7 @@ def list_tickets(
                 subject=row["subject"],
                 status=row["status"],
                 priority=row["priority"],
-                created_at=row["created_at"]
+                created_at=str(row["created_at"])
             )
             for row in rows
         ]
@@ -272,23 +386,25 @@ def healthcheck() -> dict:
 def get_ticket_details(ticket_id: str) -> TicketDetailResponse:
     conn = get_db_connection()
     try:
-        ticket_row = conn.execute(
+        ticket_row = db_execute_one(
+            conn,
             "SELECT * FROM tickets WHERE ticket_id = ?",
             (ticket_id,),
-        ).fetchone()
+        )
 
         if not ticket_row:
             raise HTTPException(status_code=404, detail="Ticket not found")
 
-        note_rows = conn.execute(
+        note_rows = db_execute(
+            conn,
             "SELECT * FROM notes WHERE ticket_id = ? ORDER BY created_at ASC",
             (ticket_id,),
-        ).fetchall()
+        )
 
         notes = [
             NoteDetailResponse(
                 note_text=row["note_text"],
-                created_at=row["created_at"]
+                created_at=str(row["created_at"])
             )
             for row in note_rows
         ]
@@ -300,8 +416,8 @@ def get_ticket_details(ticket_id: str) -> TicketDetailResponse:
             description=ticket_row["description"],
             status=ticket_row["status"],
             priority=ticket_row["priority"],
-            created_at=ticket_row["created_at"],
-            updated_at=ticket_row["updated_at"],
+            created_at=str(ticket_row["created_at"]),
+            updated_at=str(ticket_row["updated_at"]),
             notes=notes
         )
     finally:
@@ -324,42 +440,58 @@ def update_ticket(ticket_id: str, payload: TicketUpdateRequest) -> dict:
 
     conn = get_db_connection()
     try:
-        ticket_row = conn.execute(
+        ticket_row = db_execute_one(
+            conn,
             "SELECT * FROM tickets WHERE ticket_id = ?",
             (ticket_id,),
-        ).fetchone()
+        )
 
         if not ticket_row:
             raise HTTPException(status_code=404, detail="Ticket not found")
 
         if payload.status is not None:
-            conn.execute(
+            db_execute(
+                conn,
                 "UPDATE tickets SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE ticket_id = ?",
                 (payload.status, ticket_id),
             )
 
         if payload.priority is not None:
-            conn.execute(
+            db_execute(
+                conn,
                 "UPDATE tickets SET priority = ?, updated_at = CURRENT_TIMESTAMP WHERE ticket_id = ?",
                 (payload.priority, ticket_id),
             )
 
         if note_content is not None:
-            conn.execute(
-                "INSERT INTO notes (ticket_id, note_text, created_at) VALUES (?, ?, CURRENT_TIMESTAMP)",
-                (ticket_id, note_content),
-            )
-            conn.execute(
-                "UPDATE tickets SET updated_at = CURRENT_TIMESTAMP WHERE ticket_id = ?",
-                (ticket_id,),
-            )
+            if IS_POSTGRES:
+                cursor = conn.cursor()
+                cursor.execute(
+                    "INSERT INTO notes (ticket_id, note_text, created_at) VALUES (%s, %s, CURRENT_TIMESTAMP)",
+                    (ticket_id, note_content),
+                )
+                cursor.execute(
+                    "UPDATE tickets SET updated_at = CURRENT_TIMESTAMP WHERE ticket_id = %s",
+                    (ticket_id,),
+                )
+                cursor.close()
+            else:
+                conn.execute(
+                    "INSERT INTO notes (ticket_id, note_text, created_at) VALUES (?, ?, CURRENT_TIMESTAMP)",
+                    (ticket_id, note_content),
+                )
+                conn.execute(
+                    "UPDATE tickets SET updated_at = CURRENT_TIMESTAMP WHERE ticket_id = ?",
+                    (ticket_id,),
+                )
 
         conn.commit()
-        updated_row = conn.execute(
+        updated_row = db_execute_one(
+            conn,
             "SELECT updated_at FROM tickets WHERE ticket_id = ?",
             (ticket_id,),
-        ).fetchone()
-        return {"success": True, "updated_at": updated_row["updated_at"]}
+        )
+        return {"success": True, "updated_at": str(updated_row["updated_at"])}
     finally:
         conn.close()
 
