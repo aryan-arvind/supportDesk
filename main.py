@@ -1,12 +1,18 @@
+import os
 import sqlite3
 from typing import List, Optional
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
 from pydantic import BaseModel, EmailStr, Field
 
 DB_PATH = "tickets.db"
 ALLOWED_STATUSES = {"Open", "In Progress", "Closed"}
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+INDEX_PATH = os.path.join(BASE_DIR, "index.html")
+CREATE_PATH = os.path.join(BASE_DIR, "create.html")
+TICKET_PATH = os.path.join(BASE_DIR, "ticket.html")
 
 app = FastAPI()
 
@@ -213,6 +219,30 @@ def list_tickets(status: Optional[str] = None, search: Optional[str] = None) -> 
         return [map_ticket_row(row) for row in rows]
     finally:
         conn.close()
+
+
+# Serve the dashboard UI.
+@app.get("/")
+def serve_index() -> FileResponse:
+    return FileResponse(INDEX_PATH)
+
+
+# Serve the create ticket page.
+@app.get("/create.html")
+def serve_create() -> FileResponse:
+    return FileResponse(CREATE_PATH)
+
+
+# Serve the ticket details page.
+@app.get("/ticket.html")
+def serve_ticket() -> FileResponse:
+    return FileResponse(TICKET_PATH)
+
+
+# Serve the dashboard UI explicitly.
+@app.get("/index.html")
+def serve_index_html() -> FileResponse:
+    return FileResponse(INDEX_PATH)
 
 
 # Provide a lightweight healthcheck for deployment monitoring.

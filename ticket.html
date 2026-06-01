@@ -185,7 +185,9 @@
   </main>
 
   <script>
-    const API_BASE = "https://web-production-031df.up.railway.app";
+    const API_BASE = window.location.origin === "null"
+      ? "https://web-production-031df.up.railway.app"
+      : window.location.origin;
     const params = new URLSearchParams(window.location.search);
     const ticketIdParam = params.get("id");
 
