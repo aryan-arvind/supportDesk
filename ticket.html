@@ -14,7 +14,7 @@
       --brand-dark: #0b4f49;
       --ink: #0f172a;
       --muted: #64748b;
-      --paper: #f8fafc;
+      --paper: #f1f5f9;
       --header-bg: rgba(255, 255, 255, 0.85);
       --header-border: #e2e8f0;
       --card-bg: #ffffff;
@@ -156,141 +156,164 @@
   </style>
 </head>
 <body class="min-h-screen">
-  <header class="sticky top-0 z-10 backdrop-blur bg-white/70 border-b border-slate-200">
+  <header class="sticky top-0 z-10 border-b border-slate-200 bg-white/80 backdrop-blur html.dark-mode:bg-slate-950/80">
     <div class="max-w-5xl mx-auto px-4 py-4 flex flex-wrap items-center justify-between gap-4">
-      <div class="flex items-center gap-4">
-        <div class="h-11 w-11 rounded-2xl bg-teal-700 text-white grid place-items-center font-semibold">SD</div>
-        <div>
-          <p class="display text-xl font-semibold tracking-tight">SupportDesk</p>
-          <p class="text-xs text-slate-500">Ticket details</p>
+      <div class="flex items-center gap-6">
+        <div class="flex items-center gap-2">
+          <span class="text-teal-700 font-extrabold text-lg tracking-tight">SupportHub CRM</span>
+          <span class="hidden sm:inline text-[10px] px-2 py-0.5 rounded-full bg-teal-50 text-teal-800 html.dark-mode:bg-teal-950/30 html.dark-mode:text-teal-400 font-bold border border-teal-100">Enterprise</span>
         </div>
+        
+        <!-- Clickable Horizontal Ribbon -->
+        <nav class="hidden md:flex items-center gap-6 text-xs font-semibold ml-4">
+          <button id="ribbonQueueBtn" class="text-slate-500 hover:text-slate-800 pb-1 transition cursor-pointer">Queue</button>
+          <button id="ribbonAnalyticsBtn" class="text-slate-500 hover:text-slate-800 pb-1 transition cursor-pointer">Analytics</button>
+          <button id="ribbonChatBtn" class="text-slate-500 hover:text-slate-800 pb-1 transition cursor-pointer">Live Chat</button>
+        </nav>
       </div>
-      <div class="flex items-center gap-3">
-        <button id="darkModeToggle" class="text-sm font-semibold px-3 py-2 rounded-full border border-slate-200 bg-white text-slate-600">🌙 Dark</button>
+      <div class="flex flex-wrap items-center gap-3">
+        <button id="darkModeToggle" class="pill px-4 py-2 rounded-full text-xs font-semibold text-slate-600">🌙 Dark</button>
         <a href="index.html" class="text-sm font-semibold text-teal-700 hover:text-teal-800">Back to tickets</a>
       </div>
     </div>
   </header>
 
   <main class="max-w-5xl mx-auto px-4 py-8">
-    <div id="notFound" class="hidden card glass rounded-3xl p-6 text-center fade-up dot-grid glass-grid">
+    <div id="notFound" class="hidden card rounded-3xl p-6 text-center fade-up">
       <p class="text-lg font-semibold">Ticket not found</p>
       <p class="text-sm text-slate-500 mt-1">Check the ticket ID and try again.</p>
     </div>
 
-    <div class="grid gap-6 lg:grid-cols-[1.45fr_0.55fr]">
-      <div class="grid gap-6">
-        <section id="ticketCard" class="hidden card glass rounded-3xl p-6 fade-up dot-grid glass-grid">
-      <div class="flex flex-wrap items-start justify-between gap-4">
-        <div>
-          <p class="text-xs uppercase tracking-[0.2em] text-slate-500">Ticket</p>
-          <h1 id="ticketId" class="display text-2xl font-semibold"></h1>
-          <p id="ticketSubject" class="text-slate-600 mt-1"></p>
-        </div>
-        <div class="flex flex-wrap gap-2">
-          <span id="statusBadge" class="px-3 py-1 rounded-full text-xs font-semibold"></span>
-          <span id="priorityBadge" class="px-3 py-1 rounded-full text-xs font-semibold"></span>
-        </div>
-      </div>
+    <!-- Hidden elements to preserve JS bindings -->
+    <div id="ticketCard" class="hidden"></div>
+    <div id="actionsCard" class="hidden"></div>
+    <div id="notesCard" class="hidden"></div>
+    <div id="notesList" class="hidden"></div>
+    <div id="historyList" class="hidden"></div>
+    <p id="ticketDescription" class="hidden"></p>
 
-      <div class="mt-6 grid gap-4 md:grid-cols-3">
-        <div class="info-tile rounded-2xl p-4 transition-all duration-300 hover:scale-[1.02]">
-          <p class="text-xs uppercase tracking-wide text-slate-500 font-semibold mb-1">👤 Customer</p>
-          <p id="customerName" class="text-base font-bold text-slate-800"></p>
-          <p id="customerEmail" class="text-xs text-slate-500"></p>
-        </div>
-        <div class="info-tile rounded-2xl p-4 transition-all duration-300 hover:scale-[1.02]">
-          <p class="text-xs uppercase tracking-wide text-slate-500 font-semibold mb-1">👤 Assignee</p>
-          <p id="ticketAssignee" class="text-base font-bold text-teal-700"></p>
-        </div>
-        <div class="info-tile rounded-2xl p-4 transition-all duration-300 hover:scale-[1.02]">
-          <p class="text-xs uppercase tracking-wide text-slate-500 font-semibold mb-1">📅 Created</p>
-          <p id="createdAt" class="text-base font-bold text-slate-800"></p>
-        </div>
-      </div>
-
-      <div class="mt-6">
-        <p class="text-sm font-semibold text-slate-700">Description</p>
-        <p id="ticketDescription" class="mt-2 text-slate-600 leading-relaxed"></p>
-      </div>
-    </section>
-
-    <section id="actionsCard" class="hidden card glass rounded-3xl p-6 fade-up" style="animation-delay: 0.05s;">
-      <h2 class="display text-lg font-semibold mb-4">Manage Ticket</h2>
-      <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 items-end">
-        <div>
-          <label class="text-sm font-semibold text-slate-700" for="statusSelect">Update Status</label>
-          <select id="statusSelect" class="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 focus:outline-none focus:ring-2 focus:ring-teal-500">
-            <option value="Open">Open</option>
-            <option value="In Progress">In Progress</option>
-            <option value="Closed">Closed</option>
-          </select>
-        </div>
-        <div>
-          <label class="text-sm font-semibold text-slate-700" for="prioritySelect">Update Priority</label>
-          <select id="prioritySelect" class="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 focus:outline-none focus:ring-2 focus:ring-teal-500">
-            <option value="Low">Low</option>
-            <option value="Medium">Medium</option>
-            <option value="High">High</option>
-            <option value="Critical">Critical</option>
-          </select>
-        </div>
-        <div>
-          <label class="text-sm font-semibold text-slate-700" for="assigneeSelect">Assignee</label>
-          <select id="assigneeSelect" class="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 focus:outline-none focus:ring-2 focus:ring-teal-500">
-            <option value="Unassigned">Unassigned</option>
-            <option value="Support Agent A">Support Agent A</option>
-            <option value="Support Agent B">Support Agent B</option>
-            <option value="Senior Escalations">Senior Escalations</option>
-          </select>
-        </div>
-        <button id="saveActions" class="w-full rounded-full bg-gradient-to-r from-teal-700 to-emerald-600 px-5 py-3 text-white text-sm font-semibold shadow-sm hover:shadow-md transition">Save Updates</button>
-      </div>
-      <p id="actionsMessage" class="mt-3 text-sm"></p>
-    </section>
-
-    <section id="notesCard" class="hidden card glass rounded-3xl p-6 fade-up" style="animation-delay: 0.1s;">
-      <h2 class="display text-lg font-semibold">Notes</h2>
-      <div id="notesList" class="mt-4 grid gap-3"></div>
-
-      <div class="mt-6">
-        <label class="text-sm font-semibold text-slate-700" for="noteInput">Add a note</label>
-        <textarea id="noteInput" rows="4" class="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 focus:outline-none focus:ring-2 focus:ring-teal-500"></textarea>
-        <button id="addNote" class="mt-3 rounded-full bg-slate-900 px-4 py-2 text-white text-sm font-semibold hover:bg-slate-800 transition">Add Note</button>
-        <p id="noteMessage" class="mt-2 text-sm"></p>
-      </div>
-    </section>
-      </div>
-
-      <aside class="grid gap-4">
-        <div class="card rounded-3xl p-6 shadow-soft fade-up glass-grid" style="animation-delay: 0.08s;">
-          <p class="text-xs uppercase tracking-[0.2em] text-slate-400">Activity History</p>
-          <h3 class="display text-base font-semibold mt-2">Audit Trail</h3>
-          <div id="historyList" class="mt-4 space-y-3 text-xs text-slate-600 max-h-[250px] overflow-y-auto pr-1">
-            <!-- Dynamic history logs go here -->
-          </div>
-          <div class="mt-4 accent-bar"></div>
-        </div>
-
-        <div class="card rounded-3xl p-6 shadow-soft" style="animation-delay: 0.12s;">
-          <p class="text-xs uppercase tracking-[0.2em] text-slate-400">Canned Templates</p>
-          <div class="mt-4 space-y-2 text-sm">
-            <button data-template="refund" class="template-btn w-full rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-left text-slate-600 hover:bg-slate-50 transition">💸 Refund Template</button>
-            <button data-template="exchange" class="template-btn w-full rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-left text-slate-600 hover:bg-slate-50 transition">🔄 Exchange Template</button>
-            <button data-template="help" class="template-btn w-full rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-left text-slate-600 hover:bg-slate-50 transition">🤝 Assistance Template</button>
+    <!-- Unified Ticket Workspace (Stitch-inspired layout) -->
+    <div id="ticketWorkspace" class="hidden grid gap-6 lg:grid-cols-[1.4fr_0.6fr]">
+      <!-- Left Column: Thread & Composer -->
+      <div class="flex flex-col gap-6">
+        <!-- Ticket Header Details -->
+        <div class="card rounded-3xl p-6 fade-up">
+          <div class="flex flex-wrap items-start justify-between gap-4">
+            <div>
+              <div class="flex items-center gap-2 flex-wrap text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">
+                <span>Tickets Workspace</span>
+                <span>/</span>
+                <span id="ticketId" class="text-teal-700 html.dark-mode:text-teal-400"></span>
+              </div>
+              <h1 id="ticketSubject" class="display text-2xl font-bold text-slate-850 html.dark-mode:text-slate-100"></h1>
+            </div>
+            <div class="flex flex-wrap gap-2">
+              <span id="statusBadge" class="px-3 py-1 rounded-full text-xs font-bold"></span>
+              <span id="priorityBadge" class="px-3 py-1 rounded-full text-xs font-bold"></span>
+            </div>
           </div>
         </div>
 
-        <div class="card rounded-3xl p-6 shadow-soft" style="animation-delay: 0.16s;">
-          <p class="text-xs uppercase tracking-[0.2em] text-slate-400">Escalations</p>
-          <div class="mt-4 space-y-2 text-sm">
-            <button id="escalateBtn" class="w-full rounded-2xl border border-red-200 bg-red-50/50 html.dark-mode:bg-red-950/20 html.dark-mode:border-red-900 px-4 py-2.5 text-left text-red-700 font-semibold hover:bg-red-50 transition flex items-center justify-between">
+        <!-- Activity History Thread -->
+        <div class="card rounded-3xl p-6 fade-up">
+          <h2 class="display text-lg font-bold text-slate-800 html.dark-mode:text-slate-200 mb-6">Activity Feed & Timeline</h2>
+          <div id="activityThread" class="max-h-[550px] overflow-y-auto pr-1">
+            <!-- Dynamic thread items go here (intakes, notes, system events) -->
+          </div>
+        </div>
+
+        <!-- Note Composer -->
+        <div class="card rounded-3xl p-6 fade-up">
+          <h2 class="display text-base font-bold text-slate-800 html.dark-mode:text-slate-200 mb-2">Reply / Internal Note</h2>
+          <textarea id="noteInput" rows="4" placeholder="Type a note or response..." class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 focus:outline-none focus:ring-2 focus:ring-teal-500 text-sm"></textarea>
+          <div class="mt-3 flex items-center justify-between">
+            <span class="text-xs text-slate-400">Notes are visible to other support agents.</span>
+            <button id="addNote" class="rounded-full bg-slate-900 text-white text-xs font-bold hover:bg-slate-800 transition px-5 py-2.5">Add Note</button>
+          </div>
+          <p id="noteMessage" class="mt-2 text-sm"></p>
+        </div>
+      </div>
+
+      <!-- Right Column: Sidebar Metadata & Controls -->
+      <div class="flex flex-col gap-6">
+        <!-- Metadata & Action Panel -->
+        <div class="card rounded-3xl p-6 fade-up space-y-6">
+          <div>
+            <h3 class="display text-sm font-bold text-slate-400 uppercase tracking-[0.1em] mb-3">Ticket Information</h3>
+            <div class="space-y-3 text-sm">
+              <div class="flex justify-between items-start gap-4">
+                <span class="text-slate-400">Customer</span>
+                <div class="text-right">
+                  <p id="customerName" class="font-bold text-slate-700 html.dark-mode:text-slate-200"></p>
+                  <p id="customerEmail" class="text-xs text-slate-500"></p>
+                </div>
+              </div>
+              <div class="flex justify-between items-center gap-4">
+                <span class="text-slate-400">Created At</span>
+                <span id="createdAt" class="font-semibold text-slate-700 html.dark-mode:text-slate-200"></span>
+              </div>
+              <div class="flex justify-between items-center gap-4">
+                <span class="text-slate-400">Current Assignee</span>
+                <span id="ticketAssignee" class="font-bold text-teal-700 html.dark-mode:text-teal-400"></span>
+              </div>
+            </div>
+          </div>
+
+          <div class="border-t border-slate-100 html.dark-mode:border-slate-800 pt-5 space-y-4">
+            <h3 class="display text-sm font-bold text-slate-400 uppercase tracking-[0.1em] mb-2">Management Controls</h3>
+            
+            <div class="space-y-3">
+              <div>
+                <label class="text-xs font-semibold text-slate-500" for="statusSelect">Ticket Status</label>
+                <select id="statusSelect" class="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-teal-500">
+                  <option value="Open">Open</option>
+                  <option value="In Progress">In Progress</option>
+                  <option value="Closed">Closed</option>
+                </select>
+              </div>
+              
+              <div>
+                <label class="text-xs font-semibold text-slate-500" for="prioritySelect">Update Priority</label>
+                <select id="prioritySelect" class="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-teal-500">
+                  <option value="Low">Low</option>
+                  <option value="Medium">Medium</option>
+                  <option value="High">High</option>
+                  <option value="Critical">Critical</option>
+                </select>
+              </div>
+              
+              <div>
+                <label class="text-xs font-semibold text-slate-500" for="assigneeSelect">Assign Teammate</label>
+                <select id="assigneeSelect" class="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-teal-500">
+                  <option value="Unassigned">Unassigned</option>
+                  <option value="Support Agent A">Support Agent A</option>
+                  <option value="Support Agent B">Support Agent B</option>
+                  <option value="Senior Escalations">Senior Escalations</option>
+                </select>
+              </div>
+            </div>
+
+            <button id="saveActions" class="w-full rounded-full bg-gradient-to-r from-teal-700 to-emerald-600 px-4 py-2.5 text-white text-xs font-bold shadow-sm hover:shadow-md transition">Save Workspace Changes</button>
+            <p id="actionsMessage" class="text-center text-xs mt-2 font-semibold"></p>
+          </div>
+
+          <div class="border-t border-slate-100 html.dark-mode:border-slate-800 pt-5 space-y-3">
+            <h3 class="display text-sm font-bold text-slate-400 uppercase tracking-[0.1em] mb-2">Canned Responses</h3>
+            <div class="space-y-2 text-xs">
+              <button data-template="refund" class="template-btn w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-left text-slate-600 hover:bg-slate-50 transition">💸 Refund Template</button>
+              <button data-template="exchange" class="template-btn w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-left text-slate-600 hover:bg-slate-50 transition">🔄 Exchange Template</button>
+              <button data-template="help" class="template-btn w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-left text-slate-600 hover:bg-slate-50 transition">🤝 Assistance Template</button>
+            </div>
+          </div>
+
+          <div class="border-t border-slate-100 html.dark-mode:border-slate-800 pt-5">
+            <button id="escalateBtn" class="w-full rounded-xl border border-red-200 bg-red-50/50 html.dark-mode:bg-red-950/20 html.dark-mode:border-red-900/60 px-4 py-2.5 text-left text-red-700 font-semibold hover:bg-red-50 transition flex items-center justify-between text-xs">
               <span>🚨 Escalate to Senior</span>
-              <span class="text-xs bg-red-100 text-red-800 px-1.5 py-0.5 rounded">Critical</span>
+              <span class="text-[10px] bg-red-100 text-red-800 px-1.5 py-0.5 rounded uppercase font-bold">Critical</span>
             </button>
           </div>
         </div>
-      </aside>
+      </div>
     </div>
   </main>
 
@@ -385,6 +408,102 @@
       });
     }
 
+    function renderActivityThread(ticket) {
+      const threadContainer = document.getElementById("activityThread");
+      if (!threadContainer) return;
+      threadContainer.innerHTML = "";
+
+      const threadItems = [];
+
+      // 1. Add the Customer Intake message
+      threadItems.push({
+        type: "intake",
+        title: `${ticket.customer_name || "Customer"} (Customer)`,
+        subtitle: ticket.customer_email || "",
+        text: ticket.description || "",
+        timestamp: new Date(ticket.created_at)
+      });
+
+      // 2. Add notes
+      if (ticket.notes) {
+        ticket.notes.forEach(note => {
+          threadItems.push({
+            type: "note",
+            title: "Internal Note",
+            subtitle: "",
+            text: note.note_text || "",
+            timestamp: new Date(note.created_at)
+          });
+        });
+      }
+
+      // 3. Add history events
+      if (ticket.history) {
+        ticket.history.forEach(log => {
+          threadItems.push({
+            type: "system",
+            text: log.log_text || "",
+            timestamp: new Date(log.created_at)
+          });
+        });
+      }
+
+      // Sort chronological (oldest to newest)
+      threadItems.sort((a, b) => a.timestamp - b.timestamp);
+
+      // Render items
+      threadItems.forEach(item => {
+        const row = document.createElement("div");
+        row.className = "mb-5 last:mb-0";
+
+        if (item.type === "intake") {
+          row.innerHTML = `
+            <div class="flex gap-4">
+              <div class="h-10 w-10 rounded-full bg-slate-200 html.dark-mode:bg-slate-700 flex-shrink-0 grid place-items-center font-bold text-slate-600 html.dark-mode:text-slate-350">
+                ${ticket.customer_name ? ticket.customer_name.charAt(0).toUpperCase() : "C"}
+              </div>
+              <div class="flex-1 bg-white html.dark-mode:bg-slate-800 border border-slate-200 html.dark-mode:border-slate-700 rounded-2xl p-4 shadow-sm">
+                <div class="flex items-center justify-between gap-2 flex-wrap mb-2">
+                  <div>
+                    <span class="font-bold text-sm text-slate-800 html.dark-mode:text-slate-100">${item.title}</span>
+                    <span class="text-xs text-slate-400 ml-1 font-medium">${item.subtitle}</span>
+                  </div>
+                  <span class="text-[10px] text-slate-400 font-semibold">${formatDate(item.timestamp)}</span>
+                </div>
+                <p class="text-sm text-slate-700 html.dark-mode:text-slate-300 leading-relaxed whitespace-pre-wrap">${item.text}</p>
+              </div>
+            </div>
+          `;
+        } else if (item.type === "note") {
+          row.innerHTML = `
+            <div class="flex gap-4">
+              <div class="h-10 w-10 rounded-full bg-teal-50 html.dark-mode:bg-teal-950/40 flex-shrink-0 grid place-items-center font-bold text-teal-700 html.dark-mode:text-teal-400 border border-teal-150 html.dark-mode:border-teal-900/50">
+                ✍️
+              </div>
+              <div class="flex-1 bg-teal-50/20 html.dark-mode:bg-teal-950/10 border border-teal-100 html.dark-mode:border-teal-900/30 rounded-2xl p-4 shadow-sm">
+                <div class="flex items-center justify-between gap-2 flex-wrap mb-2">
+                  <span class="font-bold text-sm text-teal-800 html.dark-mode:text-teal-350">${item.title}</span>
+                  <span class="text-[10px] text-teal-600 html.dark-mode:text-teal-400 font-semibold">${formatDate(item.timestamp)}</span>
+                </div>
+                <p class="text-sm text-slate-700 html.dark-mode:text-slate-300 leading-relaxed whitespace-pre-wrap">${item.text}</p>
+              </div>
+            </div>
+          `;
+        } else if (item.type === "system") {
+          row.innerHTML = `
+            <div class="flex items-center gap-3 pl-14 text-xs text-slate-500 html.dark-mode:text-slate-400 py-1">
+              <span class="h-1.5 w-1.5 rounded-full bg-slate-300 html.dark-mode:bg-slate-600"></span>
+              <span class="font-semibold text-[11px] leading-tight">${item.text}</span>
+              <span class="text-[9px] text-slate-400 ml-auto">${formatDate(item.timestamp)}</span>
+            </div>
+          `;
+        }
+        threadContainer.appendChild(row);
+      });
+      // Scroll to bottom of container
+      threadContainer.scrollTop = threadContainer.scrollHeight;
+    }
+
     function showTicket(data) {
       ticketIdEl.textContent = data.ticket_id;
       ticketSubject.textContent = data.subject;
@@ -397,6 +516,10 @@
       prioritySelect.value = data.priority;
       document.getElementById("assigneeSelect").value = data.assignee || "Unassigned";
       setBadgeStyles(data.status, data.priority);
+      
+      // Render our unified chronological timeline thread!
+      renderActivityThread(data);
+
       renderNotes(data.notes || []);
       renderHistory(data.history || []);
     }
@@ -424,6 +547,11 @@
       ticketCard.classList.remove("hidden");
       actionsCard.classList.remove("hidden");
       notesCard.classList.remove("hidden");
+      
+      const workspace = document.getElementById("ticketWorkspace");
+      if (workspace) {
+        workspace.classList.remove("hidden");
+      }
     }
 
     async function loadTicket() {
@@ -566,6 +694,119 @@
     });
 
     loadTicket();
+
+    // Horizontal Ribbon and Chat Drawer Logic
+    const ribbonQueueBtn = document.getElementById("ribbonQueueBtn");
+    const ribbonAnalyticsBtn = document.getElementById("ribbonAnalyticsBtn");
+    const ribbonChatBtn = document.getElementById("ribbonChatBtn");
+
+    function updateRibbonActive(activeId) {
+      if (!ribbonQueueBtn || !ribbonAnalyticsBtn || !ribbonChatBtn) return;
+      [ribbonQueueBtn, ribbonAnalyticsBtn, ribbonChatBtn].forEach(btn => {
+        btn.className = "text-slate-500 hover:text-slate-800 pb-1 transition cursor-pointer";
+      });
+      const active = document.getElementById(activeId);
+      if (active) {
+        active.className = "text-teal-700 html.dark-mode:text-teal-400 border-b-2 border-teal-700 html.dark-mode:border-teal-400 pb-1 font-bold cursor-pointer";
+      }
+    }
+
+    if (ribbonQueueBtn) {
+      ribbonQueueBtn.addEventListener("click", () => {
+        window.location.href = "index.html";
+      });
+    }
+    if (ribbonAnalyticsBtn) {
+      ribbonAnalyticsBtn.addEventListener("click", () => {
+        window.location.href = "index.html?view=analytics";
+      });
+    }
+
+    const chatDrawer = document.getElementById("chatDrawer");
+    const closeChatBtn = document.getElementById("closeChatBtn");
+    const chatInput = document.getElementById("chatInput");
+    const sendChatBtn = document.getElementById("sendChatBtn");
+    const chatBody = document.getElementById("chatBody");
+
+    function toggleChat(isOpen) {
+      if (isOpen) {
+        chatDrawer.classList.remove("translate-x-full");
+      } else {
+        chatDrawer.classList.add("translate-x-full");
+        updateRibbonActive(null);
+      }
+    }
+
+    if (ribbonChatBtn) {
+      ribbonChatBtn.addEventListener("click", () => {
+        updateRibbonActive("ribbonChatBtn");
+        toggleChat(true);
+      });
+    }
+
+    if (closeChatBtn) {
+      closeChatBtn.addEventListener("click", () => toggleChat(false));
+    }
+
+    function appendChatMessage(text, isUser = false) {
+      const msg = document.createElement("div");
+      msg.className = isUser 
+        ? "bg-teal-700 text-white p-3 rounded-2xl max-w-[85%] self-end ml-auto"
+        : "bg-slate-100 html.dark-mode:bg-slate-800 text-slate-700 html.dark-mode:text-slate-300 p-3 rounded-2xl max-w-[85%]";
+      msg.textContent = text;
+      chatBody.appendChild(msg);
+      chatBody.scrollTop = chatBody.scrollHeight;
+    }
+
+    async function handleSend() {
+      const val = chatInput.value.trim();
+      if (!val) return;
+      appendChatMessage(val, true);
+      chatInput.value = "";
+
+      // Simple chatbot reply simulator
+      setTimeout(() => {
+        const lower = val.toLowerCase();
+        let reply = "Thanks for your inquiry! Support Agent Aryan has been notified and will jump into this conversation shortly.";
+        if (lower.includes("refund") || lower.includes("charge")) {
+          reply = "For refund claims, please locate the order ticket details view and use the 'Canned Templates' to process the request.";
+        } else if (lower.includes("exchange") || lower.includes("jacket")) {
+          reply = "For product exchanges, update the ticket priority to High and assign it to Support Agent B.";
+        } else if (lower.includes("sync") || lower.includes("email")) {
+          reply = "To sync inbound emails, verify that your testmail api key and namespace are configured and click the 'Sync Inbox' button in the sidebar.";
+        }
+        appendChatMessage(reply, false);
+      }, 800);
+    }
+
+    if (sendChatBtn) {
+      sendChatBtn.addEventListener("click", handleSend);
+    }
+    if (chatInput) {
+      chatInput.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") handleSend();
+      });
+    }
   </script>
+
+  <!-- Live Chat Side Drawer -->
+  <div id="chatDrawer" class="fixed inset-y-0 right-0 w-[350px] bg-white html.dark-mode:bg-slate-900 border-l border-slate-200 html.dark-mode:border-slate-800 shadow-2xl z-50 transform translate-x-full transition-transform duration-300 flex flex-col">
+    <div class="p-4 border-b border-slate-200 html.dark-mode:border-slate-800 flex items-center justify-between bg-slate-50 html.dark-mode:bg-slate-900/50">
+      <div class="flex items-center gap-2">
+        <span class="h-2.5 w-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+        <h4 class="font-bold text-sm text-slate-800">Live Chat Assistant</h4>
+      </div>
+      <button id="closeChatBtn" class="text-slate-400 hover:text-slate-600 text-lg cursor-pointer">&times;</button>
+    </div>
+    <div id="chatBody" class="flex-1 p-4 overflow-y-auto space-y-3 text-xs">
+      <div class="bg-slate-100 html.dark-mode:bg-slate-800 p-3 rounded-2xl max-w-[85%] text-slate-700 html.dark-mode:text-slate-300">
+        Hi! Welcome to SupportDesk CRM. Ask us any questions about tickets, sync options, or setup guide parameters!
+      </div>
+    </div>
+    <div class="p-3 border-t border-slate-200 html.dark-mode:border-slate-800 flex gap-2">
+      <input id="chatInput" type="text" placeholder="Type a message..." class="flex-1 rounded-full border border-slate-200 bg-white px-3 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-teal-500" />
+      <button id="sendChatBtn" class="h-8 w-8 bg-teal-700 hover:bg-teal-800 text-white rounded-full grid place-items-center font-bold cursor-pointer">➔</button>
+    </div>
+  </div>
 </body>
 </html>

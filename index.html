@@ -14,7 +14,7 @@
       --brand-dark: #0b4f49;
       --ink: #0f172a;
       --muted: #64748b;
-      --paper: #f8fafc;
+      --paper: #f1f5f9;
       --sidebar-bg: #ffffff;
       --sidebar-border: #e2e8f0;
       --header-bg: rgba(255, 255, 255, 0.85);
@@ -317,25 +317,31 @@
     </aside>
 
     <div class="flex flex-col">
-      <header class="sticky top-0 z-10 border-b border-slate-200 bg-white/80 backdrop-blur">
+      <header class="sticky top-0 z-10 border-b border-slate-200 bg-white/80 backdrop-blur html.dark-mode:bg-slate-950/80">
         <div class="max-w-6xl mx-auto px-4 py-4 flex flex-wrap items-center justify-between gap-4">
-          <div class="flex items-center gap-4">
-            <button id="sidebarToggle" class="lg:hidden pill px-3 py-2 rounded-lg text-slate-600">☰</button>
-            <div>
-              <p class="text-xs uppercase tracking-[0.2em] text-slate-400">SupportDesk</p>
-              <h1 class="display text-2xl font-semibold">Ticket workspace</h1>
-              <p class="text-xs text-slate-500">Monitor incoming requests and keep the team aligned.</p>
+          <div class="flex items-center gap-6">
+            <button id="sidebarToggle" class="lg:hidden pill px-2.5 py-1.5 rounded-lg text-slate-600">☰</button>
+            <div class="flex items-center gap-2">
+              <span class="text-teal-700 font-extrabold text-lg tracking-tight">SupportDesk CRM</span>
+              <span class="hidden sm:inline text-[10px] px-2 py-0.5 rounded-full bg-teal-50 text-teal-800 html.dark-mode:bg-teal-950/30 html.dark-mode:text-teal-400 font-bold border border-teal-100">Enterprise</span>
             </div>
+            
+            <!-- Clickable Horizontal Ribbon -->
+            <nav class="hidden md:flex items-center gap-6 text-xs font-semibold ml-4">
+              <button id="ribbonQueueBtn" class="text-teal-700 html.dark-mode:text-teal-400 border-b-2 border-teal-700 html.dark-mode:border-teal-400 pb-1 font-bold cursor-pointer">Queue</button>
+              <button id="ribbonAnalyticsBtn" class="text-slate-500 hover:text-slate-800 pb-1 transition cursor-pointer">Analytics</button>
+              <button id="ribbonChatBtn" class="text-slate-500 hover:text-slate-800 pb-1 transition cursor-pointer">Live Chat</button>
+            </nav>
           </div>
           <div class="flex flex-wrap items-center gap-3">
             <div class="hidden md:flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-2 text-xs text-slate-500">
               <span class="h-2 w-2 rounded-full bg-emerald-500"></span>
               Live sync
             </div>
-            <button class="pill px-4 py-2 rounded-full text-sm font-semibold text-slate-600">Export</button>
-            <button id="darkModeToggle" class="pill px-4 py-2 rounded-full text-sm font-semibold text-slate-600">🌙 Dark</button>
-            <a href="create.html" class="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-teal-700 to-emerald-600 px-5 py-2.5 text-white text-sm font-semibold shadow-soft hover:shadow-md transition">
-              New Ticket
+            <button class="pill px-4 py-2 rounded-full text-xs font-semibold text-slate-600">Export</button>
+            <button id="darkModeToggle" class="pill px-4 py-2 rounded-full text-xs font-semibold text-slate-600">🌙 Dark</button>
+            <a href="create.html" class="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-teal-700 to-emerald-600 px-4 py-2 text-white text-xs font-semibold shadow-soft hover:shadow-md transition">
+              + New Ticket
             </a>
           </div>
         </div>
@@ -345,7 +351,7 @@
         <!-- Tickets Inbox View -->
         <div id="ticketsInboxView" class="space-y-6">
           <section class="grid gap-4 lg:grid-cols-[2.2fr_1fr]">
-            <div class="card glass rounded-3xl p-6 fade-up dot-grid glass-grid">
+            <div class="card glass rounded-3xl p-6 fade-up">
               <div class="flex flex-wrap items-center justify-between gap-3">
                 <div>
                   <p class="text-xs uppercase tracking-[0.2em] text-slate-500">Search</p>
@@ -356,7 +362,7 @@
               <input id="searchInput" type="text" placeholder="Search by ticket, name, email, or subject" class="mt-4 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 focus:outline-none focus:ring-2 focus:ring-teal-500" />
               <p class="text-xs text-slate-500 mt-2">Results update as you type.</p>
             </div>
-            <div class="card glass rounded-3xl p-6 fade-up glass-grid" style="animation-delay: 0.05s;">
+            <div class="card glass rounded-3xl p-6 fade-up" style="animation-delay: 0.05s;">
               <p class="text-xs uppercase tracking-[0.2em] text-slate-500">Advanced filters</p>
               <h2 class="display text-lg font-semibold mt-1">Pipeline view</h2>
               <div class="mt-4 flex flex-col gap-3">
@@ -384,25 +390,25 @@
           </section>
 
           <section class="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-            <div class="card rounded-2xl p-4 shadow-soft fade-up glass-grid">
+            <div class="card rounded-2xl p-4 shadow-soft fade-up">
               <p class="text-xs uppercase tracking-[0.2em] text-slate-400">Total</p>
               <p id="statTotal" class="display text-2xl font-semibold mt-2">0</p>
               <p class="text-xs text-slate-500 mt-1">Tickets in view</p>
               <div class="mt-4 sparkline"></div>
             </div>
-            <div class="card rounded-2xl p-4 shadow-soft fade-up glass-grid" style="animation-delay: 0.04s;">
+            <div class="card rounded-2xl p-4 shadow-soft fade-up" style="animation-delay: 0.04s;">
               <p class="text-xs uppercase tracking-[0.2em] text-slate-400">Open</p>
               <p id="statOpen" class="display text-2xl font-semibold mt-2">0</p>
               <p class="text-xs text-slate-500 mt-1">Needs response</p>
               <div class="mt-4 accent-bar accent-blue"></div>
             </div>
-            <div class="card rounded-2xl p-4 shadow-soft fade-up glass-grid" style="animation-delay: 0.08s;">
+            <div class="card rounded-2xl p-4 shadow-soft fade-up" style="animation-delay: 0.08s;">
               <p class="text-xs uppercase tracking-[0.2em] text-slate-400">In progress</p>
               <p id="statProgress" class="display text-2xl font-semibold mt-2">0</p>
               <p class="text-xs text-slate-500 mt-1">Being handled</p>
               <div class="mt-4 accent-bar accent-amber"></div>
             </div>
-            <div class="card rounded-2xl p-4 shadow-soft fade-up glass-grid" style="animation-delay: 0.12s;">
+            <div class="card rounded-2xl p-4 shadow-soft fade-up" style="animation-delay: 0.12s;">
               <p class="text-xs uppercase tracking-[0.2em] text-slate-400">Closed</p>
               <p id="statClosed" class="display text-2xl font-semibold mt-2">0</p>
               <p class="text-xs text-slate-500 mt-1">Resolved today</p>
@@ -411,7 +417,7 @@
           </section>
 
           <section class="grid gap-6 lg:grid-cols-[2.1fr_1fr]">
-            <div class="card glass rounded-3xl fade-up" style="animation-delay: 0.1s;">
+            <div id="ticketsTableCard" class="card glass rounded-3xl fade-up" style="animation-delay: 0.1s;">
               <div class="px-6 py-5 border-b border-slate-100 flex flex-wrap items-center justify-between gap-3">
                 <div>
                   <h2 class="display text-lg font-semibold">Tickets</h2>
@@ -443,7 +449,7 @@
             </div>
 
             <aside class="grid gap-4">
-              <div class="card rounded-3xl p-5 shadow-soft fade-up glass-grid" style="animation-delay: 0.12s;">
+              <div class="card rounded-3xl p-5 shadow-soft fade-up" style="animation-delay: 0.12s;">
                 <div class="flex items-center justify-between">
                   <p class="text-xs uppercase tracking-[0.2em] text-slate-400">Activity</p>
                   <span class="chip text-xs px-2 py-1 rounded-full text-slate-500">Today</span>
@@ -473,7 +479,7 @@
                 </div>
               </div>
 
-              <div class="card rounded-3xl p-5 shadow-soft fade-up glass-grid" style="animation-delay: 0.16s;">
+              <div class="card rounded-3xl p-5 shadow-soft fade-up" style="animation-delay: 0.16s;">
                 <p class="text-xs uppercase tracking-[0.2em] text-slate-400">Guidance</p>
                 <h3 class="display text-base font-semibold mt-2">Response checklist</h3>
                 <ul class="mt-4 space-y-2 text-sm text-slate-600">
@@ -502,22 +508,22 @@
           </div>
 
           <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-            <div class="card rounded-3xl p-5 shadow-soft glass-grid">
+            <div class="card rounded-3xl p-5 shadow-soft">
               <p class="text-xs uppercase tracking-[0.2em] text-slate-400">Avg Response Time</p>
               <p class="display text-3xl font-bold mt-2 text-teal-700">1.8 hrs</p>
               <p class="text-xs text-slate-500 mt-1">↓ 15% from yesterday</p>
             </div>
-            <div class="card rounded-3xl p-5 shadow-soft glass-grid">
+            <div class="card rounded-3xl p-5 shadow-soft">
               <p class="text-xs uppercase tracking-[0.2em] text-slate-400">Resolution Rate</p>
               <p class="display text-3xl font-bold mt-2 text-blue-600">94.2%</p>
               <p class="text-xs text-slate-500 mt-1">↑ 2.1% this week</p>
             </div>
-            <div class="card rounded-3xl p-5 shadow-soft glass-grid">
+            <div class="card rounded-3xl p-5 shadow-soft">
               <p class="text-xs uppercase tracking-[0.2em] text-slate-400">SLA Target Met</p>
               <p class="display text-3xl font-bold mt-2 text-amber-600">98.5%</p>
               <p class="text-xs text-slate-500 mt-1">Goal: >95.0%</p>
             </div>
-            <div class="card rounded-3xl p-5 shadow-soft glass-grid">
+            <div class="card rounded-3xl p-5 shadow-soft">
               <p class="text-xs uppercase tracking-[0.2em] text-slate-400">Customer CSAT</p>
               <p class="display text-3xl font-bold mt-2 text-rose-600">4.8 / 5</p>
               <p class="text-xs text-slate-500 mt-1">Based on 142 responses</p>
@@ -567,7 +573,7 @@
               </div>
             </div>
 
-            <div class="card rounded-3xl p-6 shadow-soft glass-grid">
+            <div class="card rounded-3xl p-6 shadow-soft">
               <h3 class="display text-lg font-bold mb-4">Pipeline Status Breakdown</h3>
               <div class="space-y-4">
                 <div class="flex items-center gap-4">
@@ -723,6 +729,7 @@
       analyticsNav.className = "w-full flex items-center gap-3 px-3 py-2 rounded-xl text-slate-600 cursor-pointer hover:bg-slate-100 transition";
       ticketsNav.className = "w-full flex items-center gap-3 px-3 py-2 rounded-xl text-slate-600 cursor-pointer hover:bg-slate-100 transition";
       
+      updateRibbonActive("ribbonQueueBtn");
       loadTickets();
     }
 
@@ -735,7 +742,36 @@
       dashboardNav.className = "w-full flex items-center gap-3 px-3 py-2 rounded-xl text-slate-600 cursor-pointer hover:bg-slate-100 transition";
       ticketsNav.className = "w-full flex items-center gap-3 px-3 py-2 rounded-xl text-slate-600 cursor-pointer hover:bg-slate-100 transition";
       
+      updateRibbonActive("ribbonAnalyticsBtn");
       loadAnalytics();
+    }
+
+    const ribbonQueueBtn = document.getElementById("ribbonQueueBtn");
+    const ribbonAnalyticsBtn = document.getElementById("ribbonAnalyticsBtn");
+    const ribbonChatBtn = document.getElementById("ribbonChatBtn");
+
+    function updateRibbonActive(activeId) {
+      if (!ribbonQueueBtn || !ribbonAnalyticsBtn || !ribbonChatBtn) return;
+      [ribbonQueueBtn, ribbonAnalyticsBtn, ribbonChatBtn].forEach(btn => {
+        btn.className = "text-slate-500 hover:text-slate-800 pb-1 transition cursor-pointer";
+      });
+      const active = document.getElementById(activeId);
+      if (active) {
+        active.className = "text-teal-700 html.dark-mode:text-teal-400 border-b-2 border-teal-700 html.dark-mode:border-teal-400 pb-1 font-bold cursor-pointer";
+      }
+    }
+
+    ribbonQueueBtn.addEventListener("click", showTicketsInbox);
+    ribbonAnalyticsBtn.addEventListener("click", showAnalytics);
+    ribbonChatBtn.addEventListener("click", () => {
+      updateRibbonActive("ribbonChatBtn");
+      toggleChat(true);
+    });
+
+    // Check url params on load to show analytics directly
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get("view") === "analytics") {
+      setTimeout(showAnalytics, 50);
     }
 
     function updateAnalyticsDashboard(tickets) {
@@ -967,10 +1003,18 @@
       }
     }
 
+    function scrollToTickets() {
+      const ticketsSection = document.getElementById("ticketsTableCard");
+      if (ticketsSection) {
+        ticketsSection.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    }
+
     statusButtons.forEach((button) => {
       button.addEventListener("click", () => {
         setActiveStatus(button.dataset.status || "");
         loadTickets();
+        scrollToTickets();
       });
     });
 
@@ -978,6 +1022,7 @@
       button.addEventListener("click", () => {
         setActivePriority(button.dataset.priority || "");
         loadTickets();
+        scrollToTickets();
       });
     });
 
@@ -1001,6 +1046,82 @@
 
     setActiveStatus("");
     loadTickets();
+  </script>
+
+  <!-- Live Chat Side Drawer -->
+  <div id="chatDrawer" class="fixed inset-y-0 right-0 w-[350px] bg-white html.dark-mode:bg-slate-900 border-l border-slate-200 html.dark-mode:border-slate-800 shadow-2xl z-50 transform translate-x-full transition-transform duration-300 flex flex-col">
+    <div class="p-4 border-b border-slate-200 html.dark-mode:border-slate-800 flex items-center justify-between bg-slate-50 html.dark-mode:bg-slate-900/50">
+      <div class="flex items-center gap-2">
+        <span class="h-2.5 w-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+        <h4 class="font-bold text-sm text-slate-800">Live Chat Assistant</h4>
+      </div>
+      <button id="closeChatBtn" class="text-slate-400 hover:text-slate-600 text-lg cursor-pointer">&times;</button>
+    </div>
+    <div id="chatBody" class="flex-1 p-4 overflow-y-auto space-y-3 text-xs">
+      <div class="bg-slate-100 html.dark-mode:bg-slate-800 p-3 rounded-2xl max-w-[85%] text-slate-700 html.dark-mode:text-slate-300">
+        Hi! Welcome to SupportDesk CRM. Ask us any questions about tickets, sync options, or setup guide parameters!
+      </div>
+    </div>
+    <div class="p-3 border-t border-slate-200 html.dark-mode:border-slate-800 flex gap-2">
+      <input id="chatInput" type="text" placeholder="Type a message..." class="flex-1 rounded-full border border-slate-200 bg-white px-3 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-teal-500" />
+      <button id="sendChatBtn" class="h-8 w-8 bg-teal-700 hover:bg-teal-800 text-white rounded-full grid place-items-center font-bold cursor-pointer">➔</button>
+    </div>
+  </div>
+
+  <script>
+    const chatDrawer = document.getElementById("chatDrawer");
+    const closeChatBtn = document.getElementById("closeChatBtn");
+    const chatInput = document.getElementById("chatInput");
+    const sendChatBtn = document.getElementById("sendChatBtn");
+    const chatBody = document.getElementById("chatBody");
+
+    function toggleChat(isOpen) {
+      if (isOpen) {
+        chatDrawer.classList.remove("translate-x-full");
+      } else {
+        chatDrawer.classList.add("translate-x-full");
+        // Reset active ribbon states
+        updateRibbonActive("ribbonQueueBtn");
+      }
+    }
+
+    closeChatBtn.addEventListener("click", () => toggleChat(false));
+
+    function appendChatMessage(text, isUser = false) {
+      const msg = document.createElement("div");
+      msg.className = isUser 
+        ? "bg-teal-700 text-white p-3 rounded-2xl max-w-[85%] self-end ml-auto"
+        : "bg-slate-100 html.dark-mode:bg-slate-800 text-slate-700 html.dark-mode:text-slate-300 p-3 rounded-2xl max-w-[85%]";
+      msg.textContent = text;
+      chatBody.appendChild(msg);
+      chatBody.scrollTop = chatBody.scrollHeight;
+    }
+
+    async function handleSend() {
+      const val = chatInput.value.trim();
+      if (!val) return;
+      appendChatMessage(val, true);
+      chatInput.value = "";
+
+      // Simple chatbot reply simulator
+      setTimeout(() => {
+        const lower = val.toLowerCase();
+        let reply = "Thanks for your inquiry! Support Agent Aryan has been notified and will jump into this conversation shortly.";
+        if (lower.includes("refund") || lower.includes("charge")) {
+          reply = "For refund claims, please locate the order ticket details view and use the 'Canned Templates' to process the request.";
+        } else if (lower.includes("exchange") || lower.includes("jacket")) {
+          reply = "For product exchanges, update the ticket priority to High and assign it to Support Agent B.";
+        } else if (lower.includes("sync") || lower.includes("email")) {
+          reply = "To sync inbound emails, verify that your testmail api key and namespace are configured and click the 'Sync Inbox' button in the sidebar.";
+        }
+        appendChatMessage(reply, false);
+      }, 800);
+    }
+
+    sendChatBtn.addEventListener("click", handleSend);
+    chatInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") handleSend();
+    });
   </script>
 </body>
 </html>
