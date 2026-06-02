@@ -243,115 +243,45 @@
   </style>
 </head>
 <body class="min-h-screen">
-  <div class="min-h-screen lg:grid lg:grid-cols-[260px_1fr]">
-    <aside id="sidebar" class="hidden lg:flex flex-col border-r border-slate-200 bg-white/70 backdrop-blur px-6 py-6 transition-all duration-300 fixed lg:static left-0 top-0 h-full w-[260px] z-20 lg:z-auto">
-      <div class="flex items-center justify-between">
-        <div class="flex items-center gap-3">
-          <div class="h-11 w-11 rounded-2xl bg-teal-700 text-white grid place-items-center font-semibold">SD</div>
-          <div>
-            <p class="display text-lg font-semibold">SupportDesk</p>
-            <p class="text-xs text-slate-500">Command center</p>
+  <div class="min-h-screen flex flex-col">
+    <!-- Repetitive sidebar removed to align with Stitch design -->
+    <header class="sticky top-0 z-10 border-b border-slate-200 bg-white/80 backdrop-blur html.dark-mode:bg-slate-950/80">
+      <div class="max-w-6xl mx-auto px-4 py-4 flex flex-wrap items-center justify-between gap-4">
+        <div class="flex items-center gap-6">
+          <div class="flex items-center gap-2">
+            <span class="text-teal-700 font-extrabold text-lg tracking-tight">SupportHub CRM</span>
+            <span class="hidden sm:inline text-[10px] px-2 py-0.5 rounded-full bg-teal-50 text-teal-800 html.dark-mode:bg-teal-950/30 html.dark-mode:text-teal-400 font-bold border border-teal-100">Enterprise</span>
           </div>
+          
+          <!-- Clickable Horizontal Ribbon -->
+          <nav class="hidden md:flex items-center gap-6 text-xs font-semibold ml-4">
+            <button id="ribbonQueueBtn" class="text-teal-700 html.dark-mode:text-teal-400 border-b-2 border-teal-700 html.dark-mode:border-teal-400 pb-1 font-bold cursor-pointer">Queue</button>
+            <button id="ribbonAnalyticsBtn" class="text-slate-500 hover:text-slate-800 pb-1 transition cursor-pointer">Analytics</button>
+            <button id="ribbonChatBtn" class="text-slate-500 hover:text-slate-800 pb-1 transition cursor-pointer">Live Chat</button>
+          </nav>
         </div>
-        <button class="pill px-2.5 py-2 rounded-full text-xs text-slate-600">v2.1</button>
-      </div>
-
-      <div class="mt-8">
-        <p class="text-xs uppercase tracking-[0.2em] text-slate-400">Workspace</p>
-        <div class="mt-3 flex items-center gap-3 rounded-2xl bg-slate-900 px-3 py-3 text-white">
-          <div class="h-9 w-9 rounded-full bg-white/15 grid place-items-center font-semibold">AR</div>
-          <div>
-            <p class="text-sm font-semibold">Aryan Support</p>
-            <p class="text-xs text-slate-300">Agent access</p>
+        <div class="flex flex-wrap items-center gap-3">
+          <div class="hidden md:flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-2 text-xs text-slate-500">
+            <span class="h-2 w-2 rounded-full bg-emerald-500"></span>
+            Live sync
           </div>
+          <button id="syncInboxBtn" class="pill px-4 py-2 rounded-full text-xs font-semibold text-slate-600 flex items-center gap-1.5" title="Sync inbound support emails">
+            <span>🔄</span> Sync Inbox
+          </button>
+          <button class="pill px-4 py-2 rounded-full text-xs font-semibold text-slate-600">Export</button>
+          <button id="darkModeToggle" class="pill px-4 py-2 rounded-full text-xs font-semibold text-slate-600">🌙 Dark</button>
+          <a href="create.html" class="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-teal-700 to-emerald-600 px-4 py-2 text-white text-xs font-semibold shadow-soft hover:shadow-md transition">
+            + New Ticket
+          </a>
         </div>
       </div>
-
-      <div class="mt-8">
-        <p class="text-xs uppercase tracking-[0.2em] text-slate-400">Navigation</p>
-        <nav class="mt-3 space-y-2 text-sm">
-          <button id="dashboardNav" class="w-full flex items-center gap-3 px-3 py-2 rounded-xl bg-slate-900 text-white font-semibold cursor-pointer">
-            <span class="h-8 w-8 rounded-xl bg-white/10 grid place-items-center">▣</span>
-            Dashboard
-          </button>
-          <button id="ticketsNav" class="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-slate-600 cursor-pointer hover:bg-slate-100 transition">
-            <span class="h-8 w-8 rounded-xl bg-slate-100 grid place-items-center">✉</span>
-            Tickets
-          </button>
-          <button id="knowledgeNav" class="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-slate-600 cursor-pointer hover:bg-slate-100 transition" title="Knowledge base">
-            <span class="h-8 w-8 rounded-xl bg-slate-100 grid place-items-center">⌁</span>
-            Knowledge
-          </button>
-          <button id="analyticsNav" class="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-slate-600 cursor-pointer hover:bg-slate-100 transition" title="Analytics dashboard">
-            <span class="h-8 w-8 rounded-xl bg-slate-100 grid place-items-center">◔</span>
-            Analytics
-          </button>
-          <button id="syncInboxBtn" class="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-slate-600 cursor-pointer hover:bg-slate-100 transition" title="Sync inbound support emails">
-            <span class="h-8 w-8 rounded-xl bg-slate-100 grid place-items-center">🔄</span>
-            Sync Inbox
-          </button>
-        </nav>
-      </div>
-
-      <div class="mt-8">
-        <p class="text-xs uppercase tracking-[0.2em] text-slate-400">Quick search</p>
-        <div class="mt-3 flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-3 py-2 text-xs text-slate-500">
-          <span>⌘</span>
-          Search tickets...
-        </div>
-      </div>
-
-      <div class="mt-auto grid gap-3">
-        <div class="card rounded-2xl p-4 glass-grid">
-          <p class="text-xs text-slate-500 uppercase tracking-wide">Today</p>
-          <p class="display text-2xl font-semibold">Pulse</p>
-          <p class="text-sm text-slate-500 mt-1">Track open requests and updates.</p>
-          <div class="mt-4 accent-bar"></div>
-        </div>
-        <div class="card rounded-2xl p-4">
-          <p class="text-xs text-slate-500 uppercase tracking-wide">Notifications</p>
-          <p class="text-sm text-slate-600 mt-2">3 new updates awaiting review.</p>
-          <button class="mt-3 pill px-3 py-1.5 rounded-full text-xs text-slate-600">View updates</button>
-        </div>
-      </div>
-    </aside>
-
-    <div class="flex flex-col">
-      <header class="sticky top-0 z-10 border-b border-slate-200 bg-white/80 backdrop-blur html.dark-mode:bg-slate-950/80">
-        <div class="max-w-6xl mx-auto px-4 py-4 flex flex-wrap items-center justify-between gap-4">
-          <div class="flex items-center gap-6">
-            <button id="sidebarToggle" class="lg:hidden pill px-2.5 py-1.5 rounded-lg text-slate-600">☰</button>
-            <div class="flex items-center gap-2">
-              <span class="text-teal-700 font-extrabold text-lg tracking-tight">SupportDesk CRM</span>
-              <span class="hidden sm:inline text-[10px] px-2 py-0.5 rounded-full bg-teal-50 text-teal-800 html.dark-mode:bg-teal-950/30 html.dark-mode:text-teal-400 font-bold border border-teal-100">Enterprise</span>
-            </div>
-            
-            <!-- Clickable Horizontal Ribbon -->
-            <nav class="hidden md:flex items-center gap-6 text-xs font-semibold ml-4">
-              <button id="ribbonQueueBtn" class="text-teal-700 html.dark-mode:text-teal-400 border-b-2 border-teal-700 html.dark-mode:border-teal-400 pb-1 font-bold cursor-pointer">Queue</button>
-              <button id="ribbonAnalyticsBtn" class="text-slate-500 hover:text-slate-800 pb-1 transition cursor-pointer">Analytics</button>
-              <button id="ribbonChatBtn" class="text-slate-500 hover:text-slate-800 pb-1 transition cursor-pointer">Live Chat</button>
-            </nav>
-          </div>
-          <div class="flex flex-wrap items-center gap-3">
-            <div class="hidden md:flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-2 text-xs text-slate-500">
-              <span class="h-2 w-2 rounded-full bg-emerald-500"></span>
-              Live sync
-            </div>
-            <button class="pill px-4 py-2 rounded-full text-xs font-semibold text-slate-600">Export</button>
-            <button id="darkModeToggle" class="pill px-4 py-2 rounded-full text-xs font-semibold text-slate-600">🌙 Dark</button>
-            <a href="create.html" class="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-teal-700 to-emerald-600 px-4 py-2 text-white text-xs font-semibold shadow-soft hover:shadow-md transition">
-              + New Ticket
-            </a>
-          </div>
-        </div>
-      </header>
+    </header>
 
       <main class="max-w-6xl mx-auto px-4 py-8 w-full">
         <!-- Tickets Inbox View -->
         <div id="ticketsInboxView" class="space-y-6">
           <section class="grid gap-4 lg:grid-cols-[2.2fr_1fr]">
-            <div class="card glass rounded-3xl p-6 fade-up">
+            <div class="card glass rounded-3xl p-6 fade-up dot-grid glass-grid">
               <div class="flex flex-wrap items-center justify-between gap-3">
                 <div>
                   <p class="text-xs uppercase tracking-[0.2em] text-slate-500">Search</p>
@@ -362,7 +292,7 @@
               <input id="searchInput" type="text" placeholder="Search by ticket, name, email, or subject" class="mt-4 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 focus:outline-none focus:ring-2 focus:ring-teal-500" />
               <p class="text-xs text-slate-500 mt-2">Results update as you type.</p>
             </div>
-            <div class="card glass rounded-3xl p-6 fade-up" style="animation-delay: 0.05s;">
+            <div class="card glass rounded-3xl p-6 fade-up glass-grid" style="animation-delay: 0.05s;">
               <p class="text-xs uppercase tracking-[0.2em] text-slate-500">Advanced filters</p>
               <h2 class="display text-lg font-semibold mt-1">Pipeline view</h2>
               <div class="mt-4 flex flex-col gap-3">
@@ -390,25 +320,25 @@
           </section>
 
           <section class="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-            <div class="card rounded-2xl p-4 shadow-soft fade-up">
+            <div class="card rounded-2xl p-4 shadow-soft fade-up glass-grid">
               <p class="text-xs uppercase tracking-[0.2em] text-slate-400">Total</p>
               <p id="statTotal" class="display text-2xl font-semibold mt-2">0</p>
               <p class="text-xs text-slate-500 mt-1">Tickets in view</p>
               <div class="mt-4 sparkline"></div>
             </div>
-            <div class="card rounded-2xl p-4 shadow-soft fade-up" style="animation-delay: 0.04s;">
+            <div class="card rounded-2xl p-4 shadow-soft fade-up glass-grid" style="animation-delay: 0.04s;">
               <p class="text-xs uppercase tracking-[0.2em] text-slate-400">Open</p>
               <p id="statOpen" class="display text-2xl font-semibold mt-2">0</p>
               <p class="text-xs text-slate-500 mt-1">Needs response</p>
               <div class="mt-4 accent-bar accent-blue"></div>
             </div>
-            <div class="card rounded-2xl p-4 shadow-soft fade-up" style="animation-delay: 0.08s;">
+            <div class="card rounded-2xl p-4 shadow-soft fade-up glass-grid" style="animation-delay: 0.08s;">
               <p class="text-xs uppercase tracking-[0.2em] text-slate-400">In progress</p>
               <p id="statProgress" class="display text-2xl font-semibold mt-2">0</p>
               <p class="text-xs text-slate-500 mt-1">Being handled</p>
               <div class="mt-4 accent-bar accent-amber"></div>
             </div>
-            <div class="card rounded-2xl p-4 shadow-soft fade-up" style="animation-delay: 0.12s;">
+            <div class="card rounded-2xl p-4 shadow-soft fade-up glass-grid" style="animation-delay: 0.12s;">
               <p class="text-xs uppercase tracking-[0.2em] text-slate-400">Closed</p>
               <p id="statClosed" class="display text-2xl font-semibold mt-2">0</p>
               <p class="text-xs text-slate-500 mt-1">Resolved today</p>
@@ -449,7 +379,7 @@
             </div>
 
             <aside class="grid gap-4">
-              <div class="card rounded-3xl p-5 shadow-soft fade-up" style="animation-delay: 0.12s;">
+              <div class="card rounded-3xl p-5 shadow-soft fade-up glass-grid" style="animation-delay: 0.12s;">
                 <div class="flex items-center justify-between">
                   <p class="text-xs uppercase tracking-[0.2em] text-slate-400">Activity</p>
                   <span class="chip text-xs px-2 py-1 rounded-full text-slate-500">Today</span>
@@ -479,7 +409,7 @@
                 </div>
               </div>
 
-              <div class="card rounded-3xl p-5 shadow-soft fade-up" style="animation-delay: 0.16s;">
+              <div class="card rounded-3xl p-5 shadow-soft fade-up glass-grid" style="animation-delay: 0.16s;">
                 <p class="text-xs uppercase tracking-[0.2em] text-slate-400">Guidance</p>
                 <h3 class="display text-base font-semibold mt-2">Response checklist</h3>
                 <ul class="mt-4 space-y-2 text-sm text-slate-600">
@@ -508,22 +438,22 @@
           </div>
 
           <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-            <div class="card rounded-3xl p-5 shadow-soft">
+            <div class="card rounded-3xl p-5 shadow-soft glass-grid">
               <p class="text-xs uppercase tracking-[0.2em] text-slate-400">Avg Response Time</p>
               <p class="display text-3xl font-bold mt-2 text-teal-700">1.8 hrs</p>
               <p class="text-xs text-slate-500 mt-1">↓ 15% from yesterday</p>
             </div>
-            <div class="card rounded-3xl p-5 shadow-soft">
+            <div class="card rounded-3xl p-5 shadow-soft glass-grid">
               <p class="text-xs uppercase tracking-[0.2em] text-slate-400">Resolution Rate</p>
               <p class="display text-3xl font-bold mt-2 text-blue-600">94.2%</p>
               <p class="text-xs text-slate-500 mt-1">↑ 2.1% this week</p>
             </div>
-            <div class="card rounded-3xl p-5 shadow-soft">
+            <div class="card rounded-3xl p-5 shadow-soft glass-grid">
               <p class="text-xs uppercase tracking-[0.2em] text-slate-400">SLA Target Met</p>
               <p class="display text-3xl font-bold mt-2 text-amber-600">98.5%</p>
               <p class="text-xs text-slate-500 mt-1">Goal: >95.0%</p>
             </div>
-            <div class="card rounded-3xl p-5 shadow-soft">
+            <div class="card rounded-3xl p-5 shadow-soft glass-grid">
               <p class="text-xs uppercase tracking-[0.2em] text-slate-400">Customer CSAT</p>
               <p class="display text-3xl font-bold mt-2 text-rose-600">4.8 / 5</p>
               <p class="text-xs text-slate-500 mt-1">Based on 142 responses</p>
@@ -573,7 +503,7 @@
               </div>
             </div>
 
-            <div class="card rounded-3xl p-6 shadow-soft">
+            <div class="card rounded-3xl p-6 shadow-soft glass-grid">
               <h3 class="display text-lg font-bold mb-4">Pipeline Status Breakdown</h3>
               <div class="space-y-4">
                 <div class="flex items-center gap-4">
@@ -601,7 +531,7 @@
             </div>
           </div>
 
-          <div class="card rounded-3xl p-6 shadow-soft">
+          <div class="card rounded-3xl p-6 shadow-soft glass-grid">
             <h3 class="display text-lg font-bold mb-2">Resolution SLA Status</h3>
             <p class="text-xs text-slate-500 mb-4">Target response metrics based on ticket severity levels</p>
             <div class="grid gap-4 md:grid-cols-3">
@@ -631,7 +561,6 @@
         </div>
       </main>
     </div>
-  </div>
 
   <script>
     const API_BASE = window.location.origin === "null"
@@ -675,16 +604,18 @@
       darkModeToggle.textContent = isDarkMode ? "☀️ Light" : "🌙 Dark";
     });
 
-    sidebarToggle.addEventListener("click", () => {
-      sidebar.classList.toggle("hidden");
-    });
+    if (sidebarToggle && sidebar) {
+      sidebarToggle.addEventListener("click", () => {
+        sidebar.classList.toggle("hidden");
+      });
 
-    // Close sidebar when clicking outside on mobile
-    document.addEventListener("click", (e) => {
-      if (!sidebar.contains(e.target) && !sidebarToggle.contains(e.target) && !sidebar.classList.contains("hidden")) {
-        sidebar.classList.add("hidden");
-      }
-    });
+      // Close sidebar when clicking outside on mobile
+      document.addEventListener("click", (e) => {
+        if (!sidebar.contains(e.target) && !sidebarToggle.contains(e.target) && !sidebar.classList.contains("hidden")) {
+          sidebar.classList.add("hidden");
+        }
+      });
+    }
 
     const dashboardNav = document.getElementById("dashboardNav");
     const analyticsNav = document.getElementById("analyticsNav");
@@ -831,26 +762,34 @@
     }
 
     // Navigation handlers
-    dashboardNav.addEventListener("click", () => {
-      showTicketsInbox();
-      sidebar.classList.add("hidden");
-    });
+    if (dashboardNav) {
+      dashboardNav.addEventListener("click", () => {
+        showTicketsInbox();
+        if (sidebar) sidebar.classList.add("hidden");
+      });
+    }
 
-    ticketsNav.addEventListener("click", () => {
-      showTicketsInbox();
-      document.getElementById("ticketTable").scrollIntoView({ behavior: "smooth" });
-      sidebar.classList.add("hidden");
-    });
+    if (ticketsNav) {
+      ticketsNav.addEventListener("click", () => {
+        showTicketsInbox();
+        document.getElementById("ticketTable").scrollIntoView({ behavior: "smooth" });
+        if (sidebar) sidebar.classList.add("hidden");
+      });
+    }
 
-    knowledgeNav.addEventListener("click", () => {
-      alert("Knowledge base coming soon! For now, check our documentation or contact support.");
-      sidebar.classList.add("hidden");
-    });
+    if (knowledgeNav) {
+      knowledgeNav.addEventListener("click", () => {
+        alert("Knowledge base coming soon! For now, check our documentation or contact support.");
+        if (sidebar) sidebar.classList.add("hidden");
+      });
+    }
 
-    analyticsNav.addEventListener("click", () => {
-      showAnalytics();
-      sidebar.classList.add("hidden");
-    });
+    if (analyticsNav) {
+      analyticsNav.addEventListener("click", () => {
+        showAnalytics();
+        if (sidebar) sidebar.classList.add("hidden");
+      });
+    }
 
     document.getElementById("closeAnalyticsBtn").addEventListener("click", showTicketsInbox);
 
@@ -858,8 +797,7 @@
       const originalContent = syncInboxBtn.innerHTML;
       syncInboxBtn.disabled = true;
       syncInboxBtn.innerHTML = `
-        <span class="h-8 w-8 rounded-xl bg-slate-100 grid place-items-center animate-spin">⏳</span>
-        Syncing...
+        <span>⏳</span> Syncing...
       `;
       
       try {
