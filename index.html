@@ -5,6 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>SupportDesk - Tickets</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+    }
+  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
@@ -35,7 +40,7 @@
       --amber: #d97706;
       --rose: #e11d48;
     }
-    html.dark-mode {
+    html.dark {
       --ink: #f8fafc;
       --muted: #94a3b8;
       --paper: #090d16;
@@ -59,82 +64,82 @@
       --amber: #fbbf24;
       --rose: #f43f5e;
     }
-    html.dark-mode body {
+    html.dark body {
       background-color: var(--paper) !important;
       color: var(--ink) !important;
     }
-    html.dark-mode aside {
+    html.dark aside {
       background-color: var(--sidebar-bg) !important;
       border-color: var(--sidebar-border) !important;
     }
-    html.dark-mode header {
+    html.dark header {
       background-color: var(--header-bg) !important;
       border-color: var(--header-border) !important;
     }
-    html.dark-mode .card {
+    html.dark .card {
       background-color: var(--card-bg) !important;
       border-color: var(--card-border) !important;
     }
-    html.dark-mode .glass {
+    html.dark .glass {
       background-color: rgba(17, 24, 39, 0.85) !important;
     }
-    html.dark-mode .chip {
+    html.dark .chip {
       background-color: rgba(31, 41, 55, 0.85) !important;
       border-color: var(--card-border) !important;
     }
-    html.dark-mode .pill {
+    html.dark .pill {
       background-color: rgba(15, 23, 42, 0.9) !important;
       border-color: var(--card-border) !important;
     }
-    html.dark-mode .soft-border {
+    html.dark .soft-border {
       border-color: var(--card-border) !important;
     }
-    html.dark-mode .bg-white {
+    html.dark .bg-white {
       background-color: var(--card-bg) !important;
       color: var(--ink) !important;
     }
-    html.dark-mode .bg-slate-50 {
+    html.dark .bg-slate-50 {
       background-color: var(--table-header) !important;
     }
-    html.dark-mode .bg-slate-100 {
+    html.dark .bg-slate-100 {
       background-color: #1e293b !important;
     }
-    html.dark-mode .bg-slate-900 {
+    html.dark .bg-slate-900 {
       background-color: var(--brand) !important;
     }
-    html.dark-mode .border-slate-200,
-    html.dark-mode .border-slate-100,
-    html.dark-mode .divide-slate-100 > * + * {
+    html.dark .border-slate-200,
+    html.dark .border-slate-100,
+    html.dark .divide-slate-100 > * + * {
       border-color: var(--card-border) !important;
     }
-    html.dark-mode .text-slate-900,
-    html.dark-mode .text-slate-800,
-    html.dark-mode .text-slate-700,
-    html.dark-mode .text-slate-600,
-    html.dark-mode .text-slate-500,
-    html.dark-mode .text-slate-400 {
+    html.dark .text-slate-900,
+    html.dark .text-slate-800,
+    html.dark .text-slate-700,
+    html.dark .text-slate-600,
+    html.dark .text-slate-500,
+    html.dark .text-slate-400 {
       color: var(--ink) !important;
     }
-    html.dark-mode .text-slate-500,
-    html.dark-mode .text-slate-400 {
+    html.dark .text-slate-500,
+    html.dark .text-slate-400 {
       color: var(--muted) !important;
     }
-    html.dark-mode input {
+    html.dark input {
       background-color: var(--input-bg) !important;
       border-color: var(--input-border) !important;
       color: var(--ink) !important;
     }
-    html.dark-mode input::placeholder {
+    html.dark input::placeholder {
       color: var(--muted) !important;
       opacity: 0.6;
     }
-    html.dark-mode thead {
+    html.dark thead {
       background-color: var(--table-header) !important;
     }
-    html.dark-mode thead th {
+    html.dark thead th {
       color: var(--muted) !important;
     }
-    html.dark-mode tr.hover\:bg-slate-50\/70:hover {
+    html.dark tr.hover\:bg-slate-50\/70:hover {
       background-color: var(--table-row-hover) !important;
     }
     body {
@@ -230,12 +235,12 @@
       color: #b91c1c !important;
       border-color: #fecdd3 !important;
     }
-    html.dark-mode .toast-success {
+    html.dark .toast-success {
       background-color: #0d201f !important;
       color: #4df3e6 !important;
       border-color: #115e59 !important;
     }
-    html.dark-mode .toast-error {
+    html.dark .toast-error {
       background-color: #270e12 !important;
       color: #fda4af !important;
       border-color: #9f1239 !important;
@@ -612,24 +617,24 @@
             <h3 class="display text-lg font-bold mb-2 text-slate-800 dark:text-slate-100">Resolution SLA Status</h3>
             <p class="text-xs text-slate-500 mb-4">Target response metrics based on ticket severity levels</p>
             <div class="grid gap-4 md:grid-cols-3">
-              <div class="p-4 rounded-2xl bg-rose-50 html.dark-mode:bg-rose-950/30 border border-rose-100 html.dark-mode:border-rose-900/50">
+              <div class="p-4 rounded-2xl bg-rose-50 dark:bg-rose-950/30 border border-rose-100 dark:border-rose-900/50">
                 <p class="text-xs font-bold text-rose-700 uppercase">Critical (SLA: 2h)</p>
                 <p class="text-lg font-extrabold mt-1 text-rose-700">100% compliance</p>
-                <div class="w-full bg-rose-200 html.dark-mode:bg-rose-900 rounded-full h-1.5 mt-2">
+                <div class="w-full bg-rose-200 dark:bg-rose-900 rounded-full h-1.5 mt-2">
                   <div class="bg-rose-600 h-1.5 rounded-full" style="width: 100%"></div>
                 </div>
               </div>
-              <div class="p-4 rounded-2xl bg-orange-50 html.dark-mode:bg-orange-950/30 border border-orange-100 html.dark-mode:border-orange-900/50">
+              <div class="p-4 rounded-2xl bg-orange-50 dark:bg-orange-950/30 border border-orange-100 dark:border-orange-900/50">
                 <p class="text-xs font-bold text-orange-700 uppercase">High (SLA: 8h)</p>
                 <p class="text-lg font-extrabold mt-1 text-orange-700">98.1% compliance</p>
-                <div class="w-full bg-orange-200 html.dark-mode:bg-orange-900 rounded-full h-1.5 mt-2">
+                <div class="w-full bg-orange-200 dark:bg-orange-900 rounded-full h-1.5 mt-2">
                   <div class="bg-orange-600 h-1.5 rounded-full" style="width: 98.1%"></div>
                 </div>
               </div>
-              <div class="p-4 rounded-2xl bg-teal-50 html.dark-mode:bg-teal-950/30 border border-teal-100 html.dark-mode:border-teal-900/50">
+              <div class="p-4 rounded-2xl bg-teal-50 dark:bg-teal-950/30 border border-teal-100 dark:border-teal-900/50">
                 <p class="text-xs font-bold text-teal-700 uppercase">Medium & Low (SLA: 24h)</p>
                 <p class="text-lg font-extrabold mt-1 text-teal-700">97.4% compliance</p>
-                <div class="w-full bg-teal-200 html.dark-mode:bg-teal-900 rounded-full h-1.5 mt-2">
+                <div class="w-full bg-teal-200 dark:bg-teal-900 rounded-full h-1.5 mt-2">
                   <div class="bg-teal-600 h-1.5 rounded-full" style="width: 97.4%"></div>
                 </div>
               </div>
@@ -678,14 +683,14 @@
     function initDarkMode() {
       const savedDarkMode = localStorage.getItem("darkMode") === "true";
       if (savedDarkMode) {
-        document.documentElement.classList.add("dark-mode");
+        document.documentElement.classList.add("dark");
         darkModeToggle.textContent = "☀️ Light";
       }
     }
 
     darkModeToggle.addEventListener("click", () => {
-      document.documentElement.classList.toggle("dark-mode");
-      const isDarkMode = document.documentElement.classList.contains("dark-mode");
+      document.documentElement.classList.toggle("dark");
+      const isDarkMode = document.documentElement.classList.contains("dark");
       localStorage.setItem("darkMode", isDarkMode);
       darkModeToggle.textContent = isDarkMode ? "☀️ Light" : "🌙 Dark";
     });
@@ -1114,8 +1119,8 @@
   </script>
 
   <!-- Live Chat Side Drawer -->
-  <div id="chatDrawer" class="fixed inset-y-0 right-0 w-[350px] bg-white html.dark-mode:bg-slate-900 border-l border-slate-200 html.dark-mode:border-slate-800 shadow-2xl z-50 transform translate-x-full transition-transform duration-300 flex flex-col">
-    <div class="p-4 border-b border-slate-200 html.dark-mode:border-slate-800 flex items-center justify-between bg-slate-50 html.dark-mode:bg-slate-900/50">
+  <div id="chatDrawer" class="fixed inset-y-0 right-0 w-[350px] bg-white dark:bg-slate-900 border-l border-slate-200 dark:border-slate-800 shadow-2xl z-50 transform translate-x-full transition-transform duration-300 flex flex-col">
+    <div class="p-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between bg-slate-50 dark:bg-slate-900/50">
       <div class="flex items-center gap-2">
         <span class="h-2.5 w-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
         <h4 class="font-bold text-sm text-slate-800">Live Chat Assistant</h4>
@@ -1123,11 +1128,11 @@
       <button id="closeChatBtn" class="text-slate-400 hover:text-slate-600 text-lg cursor-pointer">&times;</button>
     </div>
     <div id="chatBody" class="flex-1 p-4 overflow-y-auto space-y-3 text-xs">
-      <div class="bg-slate-100 html.dark-mode:bg-slate-800 p-3 rounded-2xl max-w-[85%] text-slate-700 html.dark-mode:text-slate-300">
+      <div class="bg-slate-100 dark:bg-slate-800 p-3 rounded-2xl max-w-[85%] text-slate-700 dark:text-slate-300">
         Hi! Welcome to SupportDesk CRM. Ask us any questions about tickets, sync options, or setup guide parameters!
       </div>
     </div>
-    <div class="p-3 border-t border-slate-200 html.dark-mode:border-slate-800 flex gap-2">
+    <div class="p-3 border-t border-slate-200 dark:border-slate-800 flex gap-2">
       <input id="chatInput" type="text" placeholder="Type a message..." class="flex-1 rounded-full border border-slate-200 bg-white px-3 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-teal-500" />
       <button id="sendChatBtn" class="h-8 w-8 bg-teal-700 hover:bg-teal-800 text-white rounded-full grid place-items-center font-bold cursor-pointer">➔</button>
     </div>
@@ -1156,7 +1161,7 @@
       const msg = document.createElement("div");
       msg.className = isUser 
         ? "bg-teal-700 text-white p-3 rounded-2xl max-w-[85%] self-end ml-auto"
-        : "bg-slate-100 html.dark-mode:bg-slate-800 text-slate-700 html.dark-mode:text-slate-300 p-3 rounded-2xl max-w-[85%]";
+        : "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 p-3 rounded-2xl max-w-[85%]";
       msg.textContent = text;
       chatBody.appendChild(msg);
       chatBody.scrollTop = chatBody.scrollHeight;
