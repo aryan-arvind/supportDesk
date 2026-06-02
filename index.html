@@ -242,120 +242,243 @@
     }
   </style>
 </head>
-<body class="min-h-screen">
-  <div class="min-h-screen flex flex-col">
-    <!-- Repetitive sidebar removed to align with Stitch design -->
-    <header class="sticky top-0 z-10 border-b border-slate-200 bg-white/80 backdrop-blur html.dark-mode:bg-slate-950/80">
-      <div class="max-w-6xl mx-auto px-4 py-4 flex flex-wrap items-center justify-between gap-4">
-        <div class="flex items-center gap-6">
-          <div class="flex items-center gap-2">
-            <span class="text-teal-700 font-extrabold text-lg tracking-tight">SupportHub CRM</span>
-            <span class="hidden sm:inline text-[10px] px-2 py-0.5 rounded-full bg-teal-50 text-teal-800 html.dark-mode:bg-teal-950/30 html.dark-mode:text-teal-400 font-bold border border-teal-100">Enterprise</span>
+<body class="min-h-screen bg-slate-50 dark:bg-slate-950">
+  <div class="min-h-screen lg:grid lg:grid-cols-[260px_1fr]">
+    <!-- Vertical Sidebar -->
+    <aside id="sidebar" class="fixed inset-y-0 left-0 z-30 w-[260px] bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex flex-col p-6 transform -translate-x-full lg:translate-x-0 lg:static lg:h-screen transition-transform duration-300">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="h-10 w-10 rounded-xl bg-slate-950 dark:bg-teal-700 text-white grid place-items-center font-bold shadow-sm">
+            <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5 12 2"></polygon>
+              <line x1="12" y1="22" x2="12" y2="15.5"></line>
+              <polyline points="22 8.5 12 15.5 2 8.5"></polyline>
+              <polyline points="2 15.5 12 8.5 22 15.5"></polyline>
+              <line x1="12" y1="2" x2="12" y2="8.5"></line>
+            </svg>
           </div>
-          
-          <!-- Clickable Horizontal Ribbon -->
-          <nav class="hidden md:flex items-center gap-6 text-xs font-semibold ml-4">
-            <button id="ribbonQueueBtn" class="text-teal-700 html.dark-mode:text-teal-400 border-b-2 border-teal-700 html.dark-mode:border-teal-400 pb-1 font-bold cursor-pointer">Queue</button>
-            <button id="ribbonAnalyticsBtn" class="text-slate-500 hover:text-slate-800 pb-1 transition cursor-pointer">Analytics</button>
-            <button id="ribbonChatBtn" class="text-slate-500 hover:text-slate-800 pb-1 transition cursor-pointer">Live Chat</button>
-          </nav>
-        </div>
-        <div class="flex flex-wrap items-center gap-3">
-          <div class="hidden md:flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-2 text-xs text-slate-500">
-            <span class="h-2 w-2 rounded-full bg-emerald-500"></span>
-            Live sync
+          <div>
+            <p class="display text-base font-bold text-slate-800 dark:text-slate-100 tracking-tight leading-none">SupportHub</p>
+            <p class="text-[9px] font-bold text-slate-400 tracking-[0.15em] uppercase mt-1">Enterprise Tier</p>
           </div>
-          <button id="syncInboxBtn" class="pill px-4 py-2 rounded-full text-xs font-semibold text-slate-600 flex items-center gap-1.5" title="Sync inbound support emails">
-            <span>🔄</span> Sync Inbox
-          </button>
-          <button class="pill px-4 py-2 rounded-full text-xs font-semibold text-slate-600">Export</button>
-          <button id="darkModeToggle" class="pill px-4 py-2 rounded-full text-xs font-semibold text-slate-600">🌙 Dark</button>
-          <a href="create.html" class="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-teal-700 to-emerald-600 px-4 py-2 text-white text-xs font-semibold shadow-soft hover:shadow-md transition">
-            + New Ticket
-          </a>
         </div>
       </div>
-    </header>
 
-      <main class="max-w-6xl mx-auto px-4 py-8 w-full">
+      <div class="mt-6">
+        <a href="create.html" class="w-full bg-slate-950 hover:bg-slate-850 text-white dark:bg-teal-750 dark:hover:bg-teal-650 font-bold text-xs rounded-xl py-3 px-4 flex items-center justify-center gap-2 shadow-sm transition-all duration-200">
+          <span class="text-sm">+</span> New Ticket
+        </a>
+      </div>
+
+      <div class="mt-8 flex-1 flex flex-col justify-between">
+        <div>
+          <p class="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400">Workspace</p>
+          <nav class="mt-3 space-y-1">
+            <button id="dashboardNav" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-850 dark:hover:text-white text-xs font-semibold cursor-pointer transition">
+              <span>▣</span> Dashboard
+            </button>
+            <button id="ticketsNav" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white text-xs font-bold cursor-pointer transition">
+              <span>✉</span> Tickets
+            </button>
+            <button id="customersNav" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-855 dark:hover:text-white text-xs font-semibold cursor-pointer transition">
+              <span>👤</span> Customers
+            </button>
+            <button id="reportsNav" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-855 dark:hover:text-white text-xs font-semibold cursor-pointer transition">
+              <span>◔</span> Reports
+            </button>
+            <button id="settingsNav" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-855 dark:hover:text-white text-xs font-semibold cursor-pointer transition">
+              <span>⚙</span> Settings
+            </button>
+          </nav>
+        </div>
+
+        <div class="space-y-4">
+          <nav class="space-y-1">
+            <button id="helpNav" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-855 dark:hover:text-white text-xs font-semibold cursor-pointer transition">
+              <span>❓</span> Help
+            </button>
+            <button id="logoutNav" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-855 dark:hover:text-white text-xs font-semibold cursor-pointer transition">
+              <span>👋</span> Logout
+            </button>
+          </nav>
+          
+          <hr class="border-slate-100 dark:border-slate-800" />
+          
+          <div class="flex items-center gap-3">
+            <div class="h-9 w-9 rounded-full bg-slate-200 dark:bg-slate-800 grid place-items-center text-slate-700 dark:text-slate-200 font-bold text-xs">AR</div>
+            <div class="min-w-0 flex-1">
+              <p class="text-xs font-bold text-slate-800 dark:text-slate-200 truncate">Alex Rivera</p>
+              <p class="text-[10px] text-slate-400 truncate">Lead Specialist</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Workspace Area -->
+    <div class="flex flex-col min-w-0">
+      <header class="sticky top-0 z-10 border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-950/80 backdrop-blur px-6 py-4 flex flex-wrap items-center justify-between gap-4">
+        <div class="flex items-center gap-4 flex-1 min-w-0">
+          <button id="sidebarToggle" class="lg:hidden p-1.5 rounded-lg border border-slate-200 dark:border-slate-800 text-slate-655 dark:text-slate-350 hover:bg-slate-50 dark:hover:bg-slate-900">
+            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
+          
+          <h1 id="pageHeaderTitle" class="display text-xl font-bold text-slate-800 dark:text-slate-100 whitespace-nowrap">Queue</h1>
+          
+          <div class="relative max-w-xs w-full hidden sm:block">
+            <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400 text-xs">🔍</span>
+            <input id="searchInput" type="text" placeholder="Search across all tickets..." class="w-full pl-9 pr-4 py-2 rounded-xl border border-slate-200 dark:border-slate-850 bg-slate-50/50 dark:bg-slate-900/50 text-xs text-slate-700 dark:text-slate-300 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent" />
+          </div>
+        </div>
+
+        <div class="flex items-center gap-6">
+          <!-- Clickable Horizontal Ribbon -->
+          <nav class="flex items-center gap-6 text-xs font-semibold border-r border-slate-200 dark:border-slate-855 pr-6 h-7">
+            <button id="ribbonQueueBtn" class="text-teal-700 dark:text-teal-400 border-b-2 border-teal-700 dark:border-teal-400 pb-1 font-bold cursor-pointer transition">Queue</button>
+            <button id="ribbonAnalyticsBtn" class="text-slate-500 hover:text-slate-800 dark:text-slate-450 dark:hover:text-slate-200 pb-1 transition cursor-pointer">Analytics</button>
+            <button id="ribbonChatBtn" class="text-slate-500 hover:text-slate-800 dark:text-slate-450 dark:hover:text-slate-200 pb-1 transition cursor-pointer">Live Chat</button>
+          </nav>
+
+          <div class="flex items-center gap-3">
+            <button class="text-slate-400 hover:text-slate-655 dark:hover:text-slate-200 relative animate-pulse" title="Notifications">
+              <span class="absolute top-0.5 right-0.5 h-1.5 w-1.5 rounded-full bg-rose-500"></span>
+              <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+              </svg>
+            </button>
+            
+            <button id="historyBtn" class="text-slate-400 hover:text-slate-655 dark:hover:text-slate-200" title="History">
+              <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </button>
+
+            <button id="syncInboxBtn" class="bg-slate-950 hover:bg-slate-850 dark:bg-teal-700 dark:hover:bg-teal-650 text-white text-xs font-semibold px-3 py-2 rounded-lg flex items-center gap-1.5 transition shadow-sm" title="Sync inbound support emails">
+              <span>🔄</span> Sync Inbox
+            </button>
+            
+            <button id="darkModeToggle" class="pill px-3 py-2 rounded-lg text-xs font-semibold text-slate-600 dark:text-slate-350">🌙 Dark</button>
+          </div>
+        </div>
+      </header>
+
+      <main class="flex-grow px-6 py-8">
         <!-- Tickets Inbox View -->
         <div id="ticketsInboxView" class="space-y-6">
-          <section class="grid gap-4 lg:grid-cols-[2.2fr_1fr]">
-            <div class="card glass rounded-3xl p-6 fade-up dot-grid glass-grid">
-              <div class="flex flex-wrap items-center justify-between gap-3">
-                <div>
-                  <p class="text-xs uppercase tracking-[0.2em] text-slate-500">Search</p>
-                  <h2 class="display text-lg font-semibold">Find tickets fast</h2>
+          <section class="grid gap-6 md:grid-cols-3">
+            <!-- Card 1: Total Tickets -->
+            <div class="card rounded-3xl p-6 shadow-soft fade-up glass-grid flex flex-col justify-between">
+              <div>
+                <div class="flex justify-between items-center">
+                  <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Tickets</span>
+                  <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-400 border border-emerald-100">+12%</span>
                 </div>
-                <span class="chip text-xs px-3 py-1 rounded-full text-slate-500">Live</span>
+                <p id="statTotal" class="display text-3xl font-extrabold text-slate-800 dark:text-slate-100 mt-2">0</p>
               </div>
-              <input id="searchInput" type="text" placeholder="Search by ticket, name, email, or subject" class="mt-4 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 focus:outline-none focus:ring-2 focus:ring-teal-500" />
-              <p class="text-xs text-slate-500 mt-2">Results update as you type.</p>
-            </div>
-            <div class="card glass rounded-3xl p-6 fade-up glass-grid" style="animation-delay: 0.05s;">
-              <p class="text-xs uppercase tracking-[0.2em] text-slate-500">Advanced filters</p>
-              <h2 class="display text-lg font-semibold mt-1">Pipeline view</h2>
-              <div class="mt-4 flex flex-col gap-3">
+              <div class="grid grid-cols-3 gap-2 mt-4 pt-4 border-t border-slate-100 dark:border-slate-800 text-[10px] font-bold text-slate-400">
                 <div>
-                  <p class="text-xs text-slate-500 mb-2">Status</p>
-                  <div class="flex flex-wrap gap-2">
-                    <button data-status="" class="status-btn px-4 py-2 rounded-full text-sm font-semibold bg-slate-900 text-white">All</button>
-                    <button data-status="Open" class="status-btn px-4 py-2 rounded-full text-sm font-semibold bg-white text-slate-700 border border-slate-200">Open</button>
-                    <button data-status="In Progress" class="status-btn px-4 py-2 rounded-full text-sm font-semibold bg-white text-slate-700 border border-slate-200">In Progress</button>
-                    <button data-status="Closed" class="status-btn px-4 py-2 rounded-full text-sm font-semibold bg-white text-slate-700 border border-slate-200">Closed</button>
-                  </div>
+                  <p class="uppercase">Open</p>
+                  <p id="statOpen" class="text-slate-700 dark:text-slate-200 text-sm mt-0.5">0</p>
                 </div>
                 <div>
-                  <p class="text-xs text-slate-500 mb-2">Priority</p>
-                  <div class="flex flex-wrap gap-2">
-                    <button data-priority="" class="priority-btn px-4 py-2 rounded-full text-sm font-semibold bg-white text-slate-700 border border-slate-200">All</button>
-                    <button data-priority="Low" class="priority-btn px-4 py-2 rounded-full text-sm font-semibold bg-white text-slate-700 border border-slate-200">Low</button>
-                    <button data-priority="Medium" class="priority-btn px-4 py-2 rounded-full text-sm font-semibold bg-white text-slate-700 border border-slate-200">Medium</button>
-                    <button data-priority="High" class="priority-btn px-4 py-2 rounded-full text-sm font-semibold bg-white text-slate-700 border border-slate-200">High</button>
-                    <button data-priority="Critical" class="priority-btn px-4 py-2 rounded-full text-sm font-semibold bg-white text-slate-700 border border-slate-200">Critical</button>
-                  </div>
+                  <p class="uppercase">In Progress</p>
+                  <p id="statProgress" class="text-slate-700 dark:text-slate-200 text-sm mt-0.5">0</p>
+                </div>
+                <div>
+                  <p class="uppercase">Closed</p>
+                  <p id="statClosed" class="text-slate-700 dark:text-slate-200 text-sm mt-0.5">0</p>
                 </div>
               </div>
             </div>
-          </section>
 
-          <section class="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-            <div class="card rounded-2xl p-4 shadow-soft fade-up glass-grid">
-              <p class="text-xs uppercase tracking-[0.2em] text-slate-400">Total</p>
-              <p id="statTotal" class="display text-2xl font-semibold mt-2">0</p>
-              <p class="text-xs text-slate-500 mt-1">Tickets in view</p>
+            <!-- Card 2: Priority Volume -->
+            <div class="card rounded-3xl p-6 shadow-soft fade-up glass-grid flex flex-col justify-between" style="animation-delay: 0.04s;">
+              <div>
+                <div class="flex justify-between items-center">
+                  <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Priority Volume</span>
+                  <span class="text-xs text-rose-500 font-bold">⚠️</span>
+                </div>
+                <div class="mt-3 space-y-3">
+                  <div>
+                    <div class="flex justify-between text-[10px] font-bold text-slate-500 mb-1">
+                      <span class="uppercase">Critical</span>
+                      <span id="statCriticalSub" class="text-slate-700 dark:text-slate-200">0 Tickets</span>
+                    </div>
+                    <div class="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-1.5 overflow-hidden">
+                      <div id="barCriticalSub" class="bg-rose-500 h-full transition-all duration-500" style="width: 0%"></div>
+                    </div>
+                  </div>
+                  <div>
+                    <div class="flex justify-between text-[10px] font-bold text-slate-500 mb-1">
+                      <span class="uppercase">High</span>
+                      <span id="statHighSub" class="text-slate-700 dark:text-slate-200">0 Tickets</span>
+                    </div>
+                    <div class="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-1.5 overflow-hidden">
+                      <div id="barHighSub" class="bg-orange-500 h-full transition-all duration-500" style="width: 0%"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Card 3: SLA Compliance -->
+            <div class="card rounded-3xl p-6 shadow-soft fade-up glass-grid flex flex-col justify-between" style="animation-delay: 0.08s;">
+              <div>
+                <div class="flex justify-between items-center">
+                  <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">SLA Compliance</span>
+                  <span class="text-xs text-emerald-500 font-bold">✓</span>
+                </div>
+                <p class="display text-3xl font-extrabold text-slate-800 dark:text-slate-100 mt-2">94.2%</p>
+                <p class="text-[10px] text-slate-400 font-semibold mt-1">Target SLA: 92.0%</p>
+              </div>
               <div class="mt-4 sparkline"></div>
             </div>
-            <div class="card rounded-2xl p-4 shadow-soft fade-up glass-grid" style="animation-delay: 0.04s;">
-              <p class="text-xs uppercase tracking-[0.2em] text-slate-400">Open</p>
-              <p id="statOpen" class="display text-2xl font-semibold mt-2">0</p>
-              <p class="text-xs text-slate-500 mt-1">Needs response</p>
-              <div class="mt-4 accent-bar accent-blue"></div>
-            </div>
-            <div class="card rounded-2xl p-4 shadow-soft fade-up glass-grid" style="animation-delay: 0.08s;">
-              <p class="text-xs uppercase tracking-[0.2em] text-slate-400">In progress</p>
-              <p id="statProgress" class="display text-2xl font-semibold mt-2">0</p>
-              <p class="text-xs text-slate-500 mt-1">Being handled</p>
-              <div class="mt-4 accent-bar accent-amber"></div>
-            </div>
-            <div class="card rounded-2xl p-4 shadow-soft fade-up glass-grid" style="animation-delay: 0.12s;">
-              <p class="text-xs uppercase tracking-[0.2em] text-slate-400">Closed</p>
-              <p id="statClosed" class="display text-2xl font-semibold mt-2">0</p>
-              <p class="text-xs text-slate-500 mt-1">Resolved today</p>
-              <div class="mt-4 accent-bar accent-rose"></div>
-            </div>
           </section>
 
-          <section class="grid gap-6 lg:grid-cols-[2.1fr_1fr]">
-            <div id="ticketsTableCard" class="card glass rounded-3xl fade-up" style="animation-delay: 0.1s;">
-              <div class="px-6 py-5 border-b border-slate-100 flex flex-wrap items-center justify-between gap-3">
-                <div>
-                  <h2 class="display text-lg font-semibold">Tickets</h2>
-                  <p class="text-xs text-slate-500">Inbox-style overview of customer requests</p>
+          <section class="grid gap-6">
+            <div id="ticketsTableCard" class="card glass rounded-3xl fade-up dot-grid glass-grid" style="animation-delay: 0.1s;">
+              <div class="px-6 py-5 border-b border-slate-100 dark:border-slate-800 flex flex-wrap items-center justify-between gap-3">
+                <div class="flex items-center gap-4 flex-wrap">
+                  <h2 class="display text-lg font-bold text-slate-850 dark:text-slate-100">Tickets</h2>
+                  
+                  <!-- Dropdown Select Filters -->
+                  <div class="flex items-center gap-2">
+                    <div class="relative">
+                      <select id="statusSelectFilter" class="appearance-none pl-3 pr-8 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs font-semibold text-slate-600 dark:text-slate-300 focus:outline-none focus:ring-1 focus:ring-teal-500 cursor-pointer">
+                        <option value="">Status: All Statuses</option>
+                        <option value="Open">Status: Open</option>
+                        <option value="In Progress">Status: In Progress</option>
+                        <option value="Closed">Status: Closed</option>
+                      </select>
+                      <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2.5 text-slate-400">
+                        <span class="text-[8px]">▼</span>
+                      </div>
+                    </div>
+                    
+                    <div class="relative">
+                      <select id="prioritySelectFilter" class="appearance-none pl-3 pr-8 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs font-semibold text-slate-600 dark:text-slate-300 focus:outline-none focus:ring-1 focus:ring-teal-500 cursor-pointer">
+                        <option value="">Priority: All Priorities</option>
+                        <option value="Low">Priority: Low</option>
+                        <option value="Medium">Priority: Medium</option>
+                        <option value="High">Priority: High</option>
+                        <option value="Critical">Priority: Critical</option>
+                      </select>
+                      <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2.5 text-slate-400">
+                        <span class="text-[8px]">▼</span>
+                      </div>
+                    </div>
+                    
+                    <button id="moreFiltersBtn" class="px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition flex items-center gap-1.5">
+                      <span>⚙</span> More Filters
+                    </button>
+                  </div>
                 </div>
+                
                 <div class="flex items-center gap-2">
                   <button class="pill px-3 py-1 rounded-full text-xs text-slate-500">Newest</button>
-                  <span id="ticketCount" class="chip text-xs px-3 py-1 rounded-full text-slate-600">0 results</span>
+                  <span id="ticketCount" class="chip text-xs px-3 py-1 rounded-full text-slate-650">0 results</span>
                 </div>
               </div>
               <div class="overflow-x-auto">
@@ -370,59 +493,13 @@
                       <th class="px-6 py-3 font-semibold">Created</th>
                     </tr>
                   </thead>
-                  <tbody id="ticketTable" class="divide-y divide-slate-100"></tbody>
+                  <tbody id="ticketTable" class="divide-y divide-slate-100 dark:divide-slate-800"></tbody>
                 </table>
               </div>
               <div id="emptyState" class="hidden px-6 py-12 text-center text-slate-500">
                 No tickets found. Try adjusting your filters.
               </div>
             </div>
-
-            <aside class="grid gap-4">
-              <div class="card rounded-3xl p-5 shadow-soft fade-up glass-grid" style="animation-delay: 0.12s;">
-                <div class="flex items-center justify-between">
-                  <p class="text-xs uppercase tracking-[0.2em] text-slate-400">Activity</p>
-                  <span class="chip text-xs px-2 py-1 rounded-full text-slate-500">Today</span>
-                </div>
-                <div class="mt-4 space-y-3 text-sm text-slate-600">
-                  <div class="flex items-start gap-3">
-                    <span class="h-2.5 w-2.5 mt-1 rounded-full bg-emerald-500"></span>
-                    <div>
-                      <p class="font-semibold text-slate-700">New customer requests</p>
-                      <p class="text-xs text-slate-500">Check latest ticket IDs.</p>
-                    </div>
-                  </div>
-                  <div class="flex items-start gap-3">
-                    <span class="h-2.5 w-2.5 mt-1 rounded-full bg-amber-400"></span>
-                    <div>
-                      <p class="font-semibold text-slate-700">In progress reviews</p>
-                      <p class="text-xs text-slate-500">Prioritize high priority items.</p>
-                    </div>
-                  </div>
-                  <div class="flex items-start gap-3">
-                    <span class="h-2.5 w-2.5 mt-1 rounded-full bg-slate-400"></span>
-                    <div>
-                      <p class="font-semibold text-slate-700">Closed confirmations</p>
-                      <p class="text-xs text-slate-500">Send wrap-up messages.</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="card rounded-3xl p-5 shadow-soft fade-up glass-grid" style="animation-delay: 0.16s;">
-                <p class="text-xs uppercase tracking-[0.2em] text-slate-400">Guidance</p>
-                <h3 class="display text-base font-semibold mt-2">Response checklist</h3>
-                <ul class="mt-4 space-y-2 text-sm text-slate-600">
-                  <li class="flex items-center gap-2"><span class="h-1.5 w-1.5 rounded-full bg-teal-600"></span>Confirm customer details</li>
-                  <li class="flex items-center gap-2"><span class="h-1.5 w-1.5 rounded-full bg-teal-600"></span>Assign priority and owner</li>
-                  <li class="flex items-center gap-2"><span class="h-1.5 w-1.5 rounded-full bg-teal-600"></span>Share next steps</li>
-                </ul>
-                <div class="mt-5 flex flex-wrap gap-2">
-                  <button class="pill px-3 py-1 rounded-full text-xs text-slate-600">Templates</button>
-                  <button class="pill px-3 py-1 rounded-full text-xs text-slate-600">Macros</button>
-                </div>
-              </div>
-            </aside>
           </section>
         </div>
 
@@ -431,72 +508,72 @@
           <div class="flex items-center justify-between">
             <div>
               <p class="text-xs uppercase tracking-[0.2em] text-slate-500">Analytics Panel</p>
-              <h2 class="display text-2xl font-bold">Performance & Volume Metrics</h2>
+              <h2 class="display text-2xl font-bold text-slate-800 dark:text-slate-100">Performance & Volume Metrics</h2>
               <p class="text-xs text-slate-500">Real-time statistics of the support desk pipeline.</p>
             </div>
-            <button id="closeAnalyticsBtn" class="pill px-4 py-2 rounded-full text-xs font-semibold text-slate-600">Back to Inbox</button>
+            <button id="closeAnalyticsBtn" class="pill px-4 py-2 rounded-full text-xs font-semibold text-slate-650">Back to Inbox</button>
           </div>
 
           <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
             <div class="card rounded-3xl p-5 shadow-soft glass-grid">
               <p class="text-xs uppercase tracking-[0.2em] text-slate-400">Avg Response Time</p>
-              <p class="display text-3xl font-bold mt-2 text-teal-700">1.8 hrs</p>
+              <p class="display text-3xl font-bold mt-2 text-teal-700 dark:text-teal-400">1.8 hrs</p>
               <p class="text-xs text-slate-500 mt-1">↓ 15% from yesterday</p>
             </div>
             <div class="card rounded-3xl p-5 shadow-soft glass-grid">
               <p class="text-xs uppercase tracking-[0.2em] text-slate-400">Resolution Rate</p>
-              <p class="display text-3xl font-bold mt-2 text-blue-600">94.2%</p>
+              <p class="display text-3xl font-bold mt-2 text-blue-600 dark:text-blue-400">94.2%</p>
               <p class="text-xs text-slate-500 mt-1">↑ 2.1% this week</p>
             </div>
             <div class="card rounded-3xl p-5 shadow-soft glass-grid">
               <p class="text-xs uppercase tracking-[0.2em] text-slate-400">SLA Target Met</p>
-              <p class="display text-3xl font-bold mt-2 text-amber-600">98.5%</p>
+              <p class="display text-3xl font-bold mt-2 text-amber-600 dark:text-amber-400">98.5%</p>
               <p class="text-xs text-slate-500 mt-1">Goal: >95.0%</p>
             </div>
             <div class="card rounded-3xl p-5 shadow-soft glass-grid">
               <p class="text-xs uppercase tracking-[0.2em] text-slate-400">Customer CSAT</p>
-              <p class="display text-3xl font-bold mt-2 text-rose-600">4.8 / 5</p>
+              <p class="display text-3xl font-bold mt-2 text-rose-600 dark:text-rose-400">4.8 / 5</p>
               <p class="text-xs text-slate-500 mt-1">Based on 142 responses</p>
             </div>
           </div>
 
           <div class="grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
             <div class="card rounded-3xl p-6 shadow-soft">
-              <h3 class="display text-lg font-bold mb-4">Volume by Priority Level</h3>
+              <h3 class="display text-lg font-bold mb-4 text-slate-800 dark:text-slate-100">Volume by Priority Level</h3>
               <div class="space-y-4">
                 <div>
                   <div class="flex justify-between text-sm mb-1">
-                    <span class="font-medium text-slate-700">Critical Priority</span>
-                    <span id="priorityCriticalCount" class="font-semibold text-rose-600">0 tickets (0%)</span>
+                    <span class="font-medium text-slate-700 dark:text-slate-300">Critical Priority</span>
+                    <span id="priorityCriticalCount" class="font-semibold text-rose-600 dark:text-rose-400">0 tickets (0%)</span>
                   </div>
-                  <div class="w-full bg-slate-100 rounded-full h-3">
+                  <div class="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-3">
                     <div id="priorityCriticalBar" class="bg-rose-500 h-3 rounded-full transition-all duration-500" style="width: 0%"></div>
                   </div>
                 </div>
                 <div>
                   <div class="flex justify-between text-sm mb-1">
-                    <span class="font-medium text-slate-700">High Priority</span>
-                    <span id="priorityHighCount" class="font-semibold text-orange-600">0 tickets (0%)</span>
+                    <span class="font-medium text-slate-700 dark:text-slate-300">High Priority</span>
+                    <span id="priorityHighCount" class="font-semibold text-orange-600 dark:text-orange-400">0 tickets (0%)</span>
                   </div>
-                  <div class="w-full bg-slate-100 rounded-full h-3">
+                  <div class="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-3">
                     <div id="priorityHighBar" class="bg-orange-500 h-3 rounded-full transition-all duration-500" style="width: 0%"></div>
                   </div>
                 </div>
                 <div>
                   <div class="flex justify-between text-sm mb-1">
-                    <span class="font-medium text-slate-700">Medium Priority</span>
-                    <span id="priorityMediumCount" class="font-semibold text-teal-600">0 tickets (0%)</span>
+                    <span class="font-medium text-slate-700 dark:text-slate-300">Medium Priority</span>
+                    <span id="priorityMediumCount" class="font-semibold text-teal-600 dark:text-teal-400">0 tickets (0%)</span>
                   </div>
-                  <div class="w-full bg-slate-100 rounded-full h-3">
+                  <div class="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-3">
                     <div id="priorityMediumBar" class="bg-teal-500 h-3 rounded-full transition-all duration-500" style="width: 0%"></div>
                   </div>
                 </div>
                 <div>
                   <div class="flex justify-between text-sm mb-1">
-                    <span class="font-medium text-slate-700">Low Priority</span>
-                    <span id="priorityLowCount" class="font-semibold text-slate-500">0 tickets (0%)</span>
+                    <span class="font-medium text-slate-700 dark:text-slate-300">Low Priority</span>
+                    <span id="priorityLowCount" class="font-semibold text-slate-500 dark:text-slate-400">0 tickets (0%)</span>
                   </div>
-                  <div class="w-full bg-slate-100 rounded-full h-3">
+                  <div class="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-3">
                     <div id="priorityLowBar" class="bg-slate-400 h-3 rounded-full transition-all duration-500" style="width: 0%"></div>
                   </div>
                 </div>
@@ -504,27 +581,27 @@
             </div>
 
             <div class="card rounded-3xl p-6 shadow-soft glass-grid">
-              <h3 class="display text-lg font-bold mb-4">Pipeline Status Breakdown</h3>
+              <h3 class="display text-lg font-bold mb-4 text-slate-800 dark:text-slate-100">Pipeline Status Breakdown</h3>
               <div class="space-y-4">
                 <div class="flex items-center gap-4">
-                  <div class="w-16 h-16 rounded-full border-4 border-blue-500 flex items-center justify-center font-bold text-sm" id="statusOpenPct">0%</div>
+                  <div class="w-16 h-16 rounded-full border-4 border-blue-500 flex items-center justify-center font-bold text-sm text-slate-800 dark:text-slate-200" id="statusOpenPct">0%</div>
                   <div>
-                    <p class="font-bold text-slate-800">Open</p>
-                    <p class="text-xs text-slate-500" id="statusOpenSummary">0 tickets awaiting initial response</p>
+                    <p class="font-bold text-slate-800 dark:text-slate-200">Open</p>
+                    <p class="text-xs text-slate-500 dark:text-slate-400" id="statusOpenSummary">0 tickets awaiting initial response</p>
                   </div>
                 </div>
                 <div class="flex items-center gap-4">
-                  <div class="w-16 h-16 rounded-full border-4 border-amber-500 flex items-center justify-center font-bold text-sm" id="statusProgressPct">0%</div>
+                  <div class="w-16 h-16 rounded-full border-4 border-amber-500 flex items-center justify-center font-bold text-sm text-slate-800 dark:text-slate-200" id="statusProgressPct">0%</div>
                   <div>
-                    <p class="font-bold text-slate-800">In Progress</p>
-                    <p class="text-xs text-slate-500" id="statusProgressSummary">0 tickets currently being resolved</p>
+                    <p class="font-bold text-slate-800 dark:text-slate-200">In Progress</p>
+                    <p class="text-xs text-slate-500 dark:text-slate-400" id="statusProgressSummary">0 tickets currently being resolved</p>
                   </div>
                 </div>
                 <div class="flex items-center gap-4">
-                  <div class="w-16 h-16 rounded-full border-4 border-slate-400 flex items-center justify-center font-bold text-sm" id="statusClosedPct">0%</div>
+                  <div class="w-16 h-16 rounded-full border-4 border-slate-400 flex items-center justify-center font-bold text-sm text-slate-800 dark:text-slate-200" id="statusClosedPct">0%</div>
                   <div>
-                    <p class="font-bold text-slate-800">Closed</p>
-                    <p class="text-xs text-slate-500" id="statusClosedSummary">0 tickets successfully closed</p>
+                    <p class="font-bold text-slate-800 dark:text-slate-200">Closed</p>
+                    <p class="text-xs text-slate-500 dark:text-slate-400" id="statusClosedSummary">0 tickets successfully closed</p>
                   </div>
                 </div>
               </div>
@@ -532,7 +609,7 @@
           </div>
 
           <div class="card rounded-3xl p-6 shadow-soft glass-grid">
-            <h3 class="display text-lg font-bold mb-2">Resolution SLA Status</h3>
+            <h3 class="display text-lg font-bold mb-2 text-slate-800 dark:text-slate-100">Resolution SLA Status</h3>
             <p class="text-xs text-slate-500 mb-4">Target response metrics based on ticket severity levels</p>
             <div class="grid gap-4 md:grid-cols-3">
               <div class="p-4 rounded-2xl bg-rose-50 html.dark-mode:bg-rose-950/30 border border-rose-100 html.dark-mode:border-rose-900/50">
@@ -561,17 +638,15 @@
         </div>
       </main>
     </div>
+  </div>
 
-  <script>
-    const API_BASE = window.location.origin === "null"
+      const API_BASE = window.location.origin === "null"
       ? "https://web-production-e5698.up.railway.app"
       : window.location.origin;
     const ticketTable = document.getElementById("ticketTable");
     const emptyState = document.getElementById("emptyState");
     const ticketCount = document.getElementById("ticketCount");
     const searchInput = document.getElementById("searchInput");
-    const statusButtons = document.querySelectorAll(".status-btn");
-    const priorityButtons = document.querySelectorAll(".priority-btn");
     const statTotal = document.getElementById("statTotal");
     const statOpen = document.getElementById("statOpen");
     const statProgress = document.getElementById("statProgress");
@@ -587,7 +662,17 @@
     const sidebarToggle = document.getElementById("sidebarToggle");
     const sidebar = document.getElementById("sidebar");
     const ticketsNav = document.getElementById("ticketsNav");
-    const knowledgeNav = document.getElementById("knowledgeNav");
+    
+    // Select Filters
+    const statusSelectFilter = document.getElementById("statusSelectFilter");
+    const prioritySelectFilter = document.getElementById("prioritySelectFilter");
+
+    // Sidebar navigation mock items
+    const customersNav = document.getElementById("customersNav");
+    const reportsNav = document.getElementById("reportsNav");
+    const settingsNav = document.getElementById("settingsNav");
+    const helpNav = document.getElementById("helpNav");
+    const logoutNav = document.getElementById("logoutNav");
 
     function initDarkMode() {
       const savedDarkMode = localStorage.getItem("darkMode") === "true";
@@ -605,20 +690,20 @@
     });
 
     if (sidebarToggle && sidebar) {
-      sidebarToggle.addEventListener("click", () => {
-        sidebar.classList.toggle("hidden");
+      sidebarToggle.addEventListener("click", (e) => {
+        e.stopPropagation();
+        sidebar.classList.toggle("-translate-x-full");
       });
 
       // Close sidebar when clicking outside on mobile
       document.addEventListener("click", (e) => {
-        if (!sidebar.contains(e.target) && !sidebarToggle.contains(e.target) && !sidebar.classList.contains("hidden")) {
-          sidebar.classList.add("hidden");
+        if (!sidebar.contains(e.target) && !sidebarToggle.contains(e.target) && !sidebar.classList.contains("-translate-x-full")) {
+          sidebar.classList.add("-translate-x-full");
         }
       });
     }
 
     const dashboardNav = document.getElementById("dashboardNav");
-    const analyticsNav = document.getElementById("analyticsNav");
     const ticketsInboxView = document.getElementById("ticketsInboxView");
     const analyticsDashboardView = document.getElementById("analyticsDashboardView");
     const syncInboxBtn = document.getElementById("syncInboxBtn");
@@ -656,10 +741,12 @@
       analyticsDashboardView.classList.add("hidden");
       
       // Toggle nav active states
-      dashboardNav.className = "w-full flex items-center gap-3 px-3 py-2 rounded-xl bg-slate-900 text-white font-semibold cursor-pointer";
-      analyticsNav.className = "w-full flex items-center gap-3 px-3 py-2 rounded-xl text-slate-600 cursor-pointer hover:bg-slate-100 transition";
-      ticketsNav.className = "w-full flex items-center gap-3 px-3 py-2 rounded-xl text-slate-600 cursor-pointer hover:bg-slate-100 transition";
+      if (dashboardNav) dashboardNav.className = "w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-850 dark:hover:text-white text-xs font-semibold cursor-pointer transition";
+      if (ticketsNav) ticketsNav.className = "w-full flex items-center gap-3 px-3 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white text-xs font-bold cursor-pointer transition";
       
+      const titleEl = document.getElementById("pageHeaderTitle");
+      if (titleEl) titleEl.textContent = "Queue";
+
       updateRibbonActive("ribbonQueueBtn");
       loadTickets();
     }
@@ -669,10 +756,12 @@
       analyticsDashboardView.classList.remove("hidden");
       
       // Toggle nav active states
-      analyticsNav.className = "w-full flex items-center gap-3 px-3 py-2 rounded-xl bg-slate-900 text-white font-semibold cursor-pointer";
-      dashboardNav.className = "w-full flex items-center gap-3 px-3 py-2 rounded-xl text-slate-600 cursor-pointer hover:bg-slate-100 transition";
-      ticketsNav.className = "w-full flex items-center gap-3 px-3 py-2 rounded-xl text-slate-600 cursor-pointer hover:bg-slate-100 transition";
+      if (dashboardNav) dashboardNav.className = "w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-850 dark:hover:text-white text-xs font-semibold cursor-pointer transition";
+      if (ticketsNav) ticketsNav.className = "w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-850 dark:hover:text-white text-xs font-semibold cursor-pointer transition";
       
+      const titleEl = document.getElementById("pageHeaderTitle");
+      if (titleEl) titleEl.textContent = "Analytics";
+
       updateRibbonActive("ribbonAnalyticsBtn");
       loadAnalytics();
     }
@@ -684,11 +773,11 @@
     function updateRibbonActive(activeId) {
       if (!ribbonQueueBtn || !ribbonAnalyticsBtn || !ribbonChatBtn) return;
       [ribbonQueueBtn, ribbonAnalyticsBtn, ribbonChatBtn].forEach(btn => {
-        btn.className = "text-slate-500 hover:text-slate-800 pb-1 transition cursor-pointer";
+        btn.className = "text-slate-500 hover:text-slate-800 dark:text-slate-450 dark:hover:text-slate-200 pb-1 transition cursor-pointer";
       });
       const active = document.getElementById(activeId);
       if (active) {
-        active.className = "text-teal-700 html.dark-mode:text-teal-400 border-b-2 border-teal-700 html.dark-mode:border-teal-400 pb-1 font-bold cursor-pointer";
+        active.className = "text-teal-700 dark:text-teal-400 border-b-2 border-teal-700 dark:border-teal-400 pb-1 font-bold cursor-pointer transition";
       }
     }
 
@@ -765,7 +854,7 @@
     if (dashboardNav) {
       dashboardNav.addEventListener("click", () => {
         showTicketsInbox();
-        if (sidebar) sidebar.classList.add("hidden");
+        if (sidebar) sidebar.classList.add("-translate-x-full");
       });
     }
 
@@ -773,21 +862,42 @@
       ticketsNav.addEventListener("click", () => {
         showTicketsInbox();
         document.getElementById("ticketTable").scrollIntoView({ behavior: "smooth" });
-        if (sidebar) sidebar.classList.add("hidden");
+        if (sidebar) sidebar.classList.add("-translate-x-full");
       });
     }
 
-    if (knowledgeNav) {
-      knowledgeNav.addEventListener("click", () => {
-        alert("Knowledge base coming soon! For now, check our documentation or contact support.");
-        if (sidebar) sidebar.classList.add("hidden");
+    if (customersNav) {
+      customersNav.addEventListener("click", () => {
+        alert("Customers database coming soon!");
+        if (sidebar) sidebar.classList.add("-translate-x-full");
+      });
+    }
+    
+    if (reportsNav) {
+      reportsNav.addEventListener("click", () => {
+        alert("Performance reports coming soon!");
+        if (sidebar) sidebar.classList.add("-translate-x-full");
       });
     }
 
-    if (analyticsNav) {
-      analyticsNav.addEventListener("click", () => {
-        showAnalytics();
-        if (sidebar) sidebar.classList.add("hidden");
+    if (settingsNav) {
+      settingsNav.addEventListener("click", () => {
+        alert("Settings coming soon!");
+        if (sidebar) sidebar.classList.add("-translate-x-full");
+      });
+    }
+
+    if (helpNav) {
+      helpNav.addEventListener("click", () => {
+        alert("Help docs & manuals coming soon!");
+        if (sidebar) sidebar.classList.add("-translate-x-full");
+      });
+    }
+
+    if (logoutNav) {
+      logoutNav.addEventListener("click", () => {
+        alert("Session logged out!");
+        if (sidebar) sidebar.classList.add("-translate-x-full");
       });
     }
 
@@ -851,18 +961,16 @@
 
     function setActiveStatus(value) {
       activeStatus = value;
-      statusButtons.forEach((button) => {
-        const isActive = button.dataset.status === value;
-        button.className = `status-btn px-4 py-2 rounded-full text-sm font-semibold ${isActive ? "bg-slate-900 text-white" : "bg-white text-slate-700 border border-slate-200"}`;
-      });
+      if (statusSelectFilter) {
+        statusSelectFilter.value = value;
+      }
     }
 
     function setActivePriority(value) {
       activePriority = value;
-      priorityButtons.forEach((button) => {
-        const isActive = button.dataset.priority === value;
-        button.className = `priority-btn px-4 py-2 rounded-full text-sm font-semibold ${isActive ? "bg-slate-900 text-white" : "bg-white text-slate-700 border border-slate-200"}`;
-      });
+      if (prioritySelectFilter) {
+        prioritySelectFilter.value = value;
+      }
     }
 
     function renderTickets(tickets) {
@@ -875,15 +983,33 @@
           if (ticket.status === "Open") acc.open += 1;
           if (ticket.status === "In Progress") acc.progress += 1;
           if (ticket.status === "Closed") acc.closed += 1;
+          
+          if (ticket.priority === "Critical") acc.critical += 1;
+          if (ticket.priority === "High") acc.high += 1;
           return acc;
         },
-        { total: 0, open: 0, progress: 0, closed: 0 }
+        { total: 0, open: 0, progress: 0, closed: 0, critical: 0, high: 0 }
       );
 
       statTotal.textContent = counts.total;
       statOpen.textContent = counts.open;
       statProgress.textContent = counts.progress;
       statClosed.textContent = counts.closed;
+
+      // Update Sub Counts / Bars in Priority Card
+      const critEl = document.getElementById("statCriticalSub");
+      const critBar = document.getElementById("barCriticalSub");
+      const highEl = document.getElementById("statHighSub");
+      const highBar = document.getElementById("barHighSub");
+
+      const total = counts.total || 1;
+      const critPct = Math.round((counts.critical / total) * 100);
+      const highPct = Math.round((counts.high / total) * 100);
+
+      if (critEl) critEl.textContent = `${counts.critical} Ticket${counts.critical === 1 ? "" : "s"}`;
+      if (critBar) critBar.style.width = `${critPct}%`;
+      if (highEl) highEl.textContent = `${counts.high} Ticket${counts.high === 1 ? "" : "s"}`;
+      if (highBar) highBar.style.width = `${highPct}%`;
 
       if (!tickets.length) {
         emptyState.classList.remove("hidden");
@@ -893,25 +1019,25 @@
       emptyState.classList.add("hidden");
       tickets.forEach((ticket) => {
         const row = document.createElement("tr");
-        row.className = "hover:bg-slate-50/70 cursor-pointer transition";
+        row.className = "hover:bg-slate-50/90 dark:hover:bg-slate-800/60 bg-white/75 dark:bg-slate-900/75 cursor-pointer transition";
         row.innerHTML = `
-          <td class="px-6 py-4 font-semibold text-slate-800">
+          <td class="px-6 py-4 font-semibold text-slate-800 dark:text-slate-200">
             <span class="inline-flex items-center gap-2">
               <span class="h-2 w-2 rounded-full ${ticket.status === "Open" ? "bg-blue-500" : ticket.status === "In Progress" ? "bg-amber-400" : "bg-slate-400"}"></span>
               ${ticket.ticket_id}
             </span>
           </td>
           <td class="px-6 py-4">
-            <div class="font-medium">${ticket.customer_name}</div>
-            <div class="text-xs text-slate-500">${ticket.customer_email}</div>
-            <div class="text-xs mt-1 text-teal-600 font-semibold flex items-center gap-1">
+            <div class="font-medium text-slate-800 dark:text-slate-200">${ticket.customer_name}</div>
+            <div class="text-xs text-slate-500 dark:text-slate-400">${ticket.customer_email}</div>
+            <div class="text-xs mt-1 text-teal-600 dark:text-teal-400 font-semibold flex items-center gap-1">
               <span>👤</span> ${ticket.assignee || 'Unassigned'}
             </div>
           </td>
-          <td class="px-6 py-4">${ticket.subject}</td>
+          <td class="px-6 py-4 text-slate-700 dark:text-slate-300">${ticket.subject}</td>
           <td class="px-6 py-4">${statusBadge(ticket.status)}</td>
           <td class="px-6 py-4">${priorityBadge(ticket.priority)}</td>
-          <td class="px-6 py-4 text-slate-500">${formatDate(ticket.created_at)}</td>
+          <td class="px-6 py-4 text-slate-500 dark:text-slate-400">${formatDate(ticket.created_at)}</td>
         `;
         row.addEventListener("click", () => {
           window.location.href = `ticket.html?id=${encodeURIComponent(ticket.ticket_id)}`;
@@ -948,21 +1074,21 @@
       }
     }
 
-    statusButtons.forEach((button) => {
-      button.addEventListener("click", () => {
-        setActiveStatus(button.dataset.status || "");
+    if (statusSelectFilter) {
+      statusSelectFilter.addEventListener("change", (e) => {
+        activeStatus = e.target.value;
         loadTickets();
         scrollToTickets();
       });
-    });
+    }
 
-    priorityButtons.forEach((button) => {
-      button.addEventListener("click", () => {
-        setActivePriority(button.dataset.priority || "");
+    if (prioritySelectFilter) {
+      prioritySelectFilter.addEventListener("change", (e) => {
+        activePriority = e.target.value;
         loadTickets();
         scrollToTickets();
       });
-    });
+    }
 
     searchInput.addEventListener("input", (event) => {
       activeSearch = event.target.value.trim();
